@@ -1,615 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammad Yeasin Alam | Doing Stuff Online & Offline</title>
-    <style>
-        /* VARIABLES FOR DARK/LIGHT MODE SHIFT */
-        :root {
-            --bg-color: #A3E6D7;
-            --text-color: #222;
-            --header-color: #000;
-            --panel-bg: #A3E6D7;
-            --border-color: #000;
-            --invert-val: 0;
-            --scanline-display: none;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammad Yeasin Alam | Doing Stuff Online & Offline</title>
+    <style>
+        /* VARIABLES FOR DARK/LIGHT MODE SHIFT */
+        :root {
+            --bg-color: #A3E6D7;
+            --text-color: #222;
+            --header-color: #000;
+            --panel-bg: #A3E6D7;
+            --border-color: #000;
+            --invert-val: 0;
+            --scanline-display: none;
+        }
 
-        [data-theme="dark"] {
-            --bg-color: #0d0e12;
-            --text-color: #00ff66;
-            --header-color: #00ff66;
-            --panel-bg: #1a1c23;
-            --border-color: #00ff66;
-            --invert-val: 1;
-            --scanline-display: block;
-        }
+        [data-theme="dark"] {
+            --bg-color: #0d0e12;
+            --text-color: #00ff66;
+            --header-color: #00ff66;
+            --panel-bg: #1a1c23;
+            --border-color: #00ff66;
+            --invert-val: 1;
+            --scanline-display: block;
+        }
 
-        /* CRT SCANLINE SHIELD EFFECT */
-        .crt-overlay {
-            display: var(--scanline-display);
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 6px 100%;
-            z-index: 99999;
-            pointer-events: none;
-        }
+        /* CRT SCANLINE SHIELD EFFECT */
+        .crt-overlay {
+            display: var(--scanline-display);
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 99999;
+            pointer-events: none;
+        }
 
-        /* KEYFRAMES FOR COMPLETE BOX BACKGROUND & BORDER RGB SHIFT */
-        @keyframes rgbFullGlow {
-            0% { 
-                background-color: rgba(255, 230, 238, 0.94); 
-                border-color: #ff0055; 
-                box-shadow: 6px 6px 20px rgba(255, 0, 85, 0.5); 
-            }
-            33% { 
-                background-color: rgba(230, 255, 250, 0.94); 
-                border-color: #00ffcc; 
-                box-shadow: 6px 6px 20px rgba(0, 255, 204, 0.5); 
-            }
-            66% { 
-                background-color: rgba(243, 230, 255, 0.94); 
-                border-color: #9b51e0; 
-                box-shadow: 6px 6px 20px rgba(155, 81, 224, 0.5); 
-            }
-            100% { 
-                background-color: rgba(255, 230, 238, 0.94); 
-                border-color: #ff0055; 
-                box-shadow: 6px 6px 20px rgba(255, 0, 85, 0.5); 
-            }
-        }
+        /* KEYFRAMES FOR COMPLETE BOX BACKGROUND & BORDER RGB SHIFT */
+        @keyframes rgbFullGlow {
+            0% { 
+                background-color: rgba(255, 230, 238, 0.94); 
+                border-color: #ff0055; 
+                box-shadow: 6px 6px 20px rgba(255, 0, 85, 0.5); 
+            }
+            33% { 
+                background-color: rgba(230, 255, 250, 0.94); 
+                border-color: #00ffcc; 
+                box-shadow: 6px 6px 20px rgba(0, 255, 204, 0.5); 
+            }
+            66% { 
+                background-color: rgba(243, 230, 255, 0.94); 
+                border-color: #9b51e0; 
+                box-shadow: 6px 6px 20px rgba(155, 81, 224, 0.5); 
+            }
+            100% { 
+                background-color: rgba(255, 230, 238, 0.94); 
+                border-color: #ff0055; 
+                box-shadow: 6px 6px 20px rgba(255, 0, 85, 0.5); 
+            }
+        }
 
-        @keyframes rgbTextGlow {
-            0% { text-shadow: 2px 2px 8px rgba(255, 0, 85, 0.8); }
-            33% { text-shadow: 2px 2px 8px rgba(0, 255, 204, 0.8); }
-            66% { text-shadow: 2px 2px 8px rgba(155, 81, 224, 0.8); }
-            100% { text-shadow: 2px 2px 8px rgba(255, 0, 85, 0.8); }
-        }
+        @keyframes rgbTextGlow {
+            0% { text-shadow: 2px 2px 8px rgba(255, 0, 85, 0.8); }
+            33% { text-shadow: 2px 2px 8px rgba(0, 255, 204, 0.8); }
+            66% { text-shadow: 2px 2px 8px rgba(155, 81, 224, 0.8); }
+            100% { text-shadow: 2px 2px 8px rgba(255, 0, 85, 0.8); }
+        }
 
-        @keyframes actualWave {
-            0% { transform: rotate( 0.0deg) }
-            10% { transform: rotate(14.0deg) }
-            20% { transform: rotate(-8.0deg) }
-            30% { transform: rotate(14.0deg) }
-            40% { transform: rotate(-4.0deg) }
-            50% { transform: rotate(10.0deg) }
-            60% { transform: rotate( 0.0deg) }
-            100% { transform: rotate( 0.0deg) }
-        }
+        @keyframes actualWave {
+            0% { transform: rotate( 0.0deg) }
+            10% { transform: rotate(14.0deg) }
+            20% { transform: rotate(-8.0deg) }
+            30% { transform: rotate(14.0deg) }
+            40% { transform: rotate(-4.0deg) }
+            50% { transform: rotate(10.0deg) }
+            60% { transform: rotate( 0.0deg) }
+            100% { transform: rotate( 0.0deg) }
+        }
 
-        @keyframes textGlitch {
-            0% { text-shadow: 2px -2px 0 #ff0055, -2px 2px 0 #00ffcc; }
-            25% { text-shadow: -2px 2px 0 #ff0055, -2px -2px 0 #00ffcc; }
-            50% { text-shadow: 2px 2px 0 #9b51e0, -2px -2px 0 #ff0055; }
-            75% { text-shadow: -2px -2px 0 #00ffcc, 2px 2px 0 #9b51e0; }
-            100% { text-shadow: 2px -2px 0 #ff0055, 2px 2px 0 #00ffcc; }
-        }
+        @keyframes textGlitch {
+            0% { text-shadow: 2px -2px 0 #ff0055, -2px 2px 0 #00ffcc; }
+            25% { text-shadow: -2px 2px 0 #ff0055, -2px -2px 0 #00ffcc; }
+            50% { text-shadow: 2px 2px 0 #9b51e0, -2px -2px 0 #ff0055; }
+            75% { text-shadow: -2px -2px 0 #00ffcc, 2px 2px 0 #9b51e0; }
+            100% { text-shadow: 2px -2px 0 #ff0055, 2px 2px 0 #00ffcc; }
+        }
 
-        @keyframes statusPulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(29, 185, 84, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 185, 84, 0); }
-        }
+        @keyframes statusPulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(29, 185, 84, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 185, 84, 0); }
+        }
 
-        .waving-animation {
-            animation: actualWave 1.2s ease-in-out;
-        }
+        .waving-animation {
+            animation: actualWave 1.2s ease-in-out;
+        }
 
-        /* DRAGGABLE OBJECT CLASSES */
-        .draggable-widget {
-            position: fixed;
-            width: 60px; height: 60px;
-            border: 3px solid #000;
-            border-radius: 50%;
-            font-size: 28px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: move;
-            box-shadow: 4px 4px 0px #000;
-            z-index: 999;
-            user-select: none;
-            touch-action: none;
-        }
+        /* DRAGGABLE OBJECT CLASSES */
+        .draggable-widget {
+            position: fixed;
+            width: 60px; height: 60px;
+            border: 3px solid #000;
+            border-radius: 50%;
+            font-size: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: move;
+            box-shadow: 4px 4px 0px #000;
+            z-index: 999;
+            user-select: none;
+            touch-action: none;
+        }
 
-        #gameWidgetBtn { bottom: 25px; right: 25px; background: #ff0055; color: #fff; }
-        #musicWidgetBtn { bottom: 25px; right: 100px; background: #1DB954; color: #fff; }
+        #gameWidgetBtn { bottom: 25px; right: 25px; background: #ff0055; color: #fff; }
+        #musicWidgetBtn { bottom: 25px; right: 100px; background: #1DB954; color: #fff; }
 
-        /* MOVABLE INTERACTIVE WINDOWS */
-        .arcade-panel-box {
-            position: fixed;
-            width: 340px;
-            max-width: calc(100% - 40px);
-            background: var(--panel-bg);
-            border: 3px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 6px 6px 0px var(--border-color);
-            z-index: 998;
-            display: none;
-            overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-        }
+        /* MOVABLE INTERACTIVE WINDOWS */
+        .arcade-panel-box {
+            position: fixed;
+            width: 340px;
+            max-width: calc(100% - 40px);
+            background: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 6px 6px 0px var(--border-color);
+            z-index: 998;
+            display: none;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-        /* Default position layers */
-        #arcadePanel { bottom: 100px; right: 25px; touch-action: none; }
-        #musicPanel { bottom: 100px; right: 25px; }
+        /* Default position layers */
+        #arcadePanel { bottom: 100px; right: 25px; touch-action: none; }
+        #musicPanel { bottom: 100px; right: 25px; }
 
-        .arcade-panel-box.show {
-            display: block;
-            animation: rgbFullGlow 9s infinite ease-in-out;
-        }
+        .arcade-panel-box.show {
+            display: block;
+            animation: rgbFullGlow 9s infinite ease-in-out;
+        }
 
-        .panel-ui-header {
-            background: var(--border-color);
-            color: var(--bg-color);
-            padding: 10px;
-            font-weight: bold;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: move;
-            user-select: none;
-        }
+        .panel-ui-header {
+            background: var(--border-color);
+            color: var(--bg-color);
+            padding: 10px;
+            font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: move;
+            user-select: none;
+        }
 
-        .panel-ui-close {
-            cursor: pointer; background: none; border: none;
-            color: var(--bg-color); font-weight: bold; font-size: 16px;
-        }
+        .panel-ui-close {
+            cursor: pointer; background: none; border: none;
+            color: var(--bg-color); font-weight: bold; font-size: 16px;
+        }
 
-        /* RETRO MINI BROWSER UI BAR CONFIGS */
-        .browser-navigation-bar {
-            background: #14161d;
-            border-bottom: 2px solid var(--border-color);
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            user-select: none;
-        }
-        .browser-action-btn {
-            background: #1a1d24;
-            border: 1px solid #00ff66;
-            color: #00ff66;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
-        .browser-action-btn:active {
-            background: #00ff66;
-            color: #14161d;
-        }
-        .browser-url-input {
-            flex-grow: 1;
-            background: #1a1d24;
-            border: 1px solid #00ff66;
-            color: #00ff66;
-            font-family: monospace;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            outline: none;
-        }
-        .browser-indicator-badge {
-            color: #ff0055;
-            font-size: 0.7rem;
-            font-weight: bold;
-            border: 1px solid #ff0055;
-            padding: 2px 4px;
-            border-radius: 3px;
-            text-transform: uppercase;
-        }
+        /* RETRO MINI BROWSER UI BAR CONFIGS */
+        .browser-navigation-bar {
+            background: #14161d;
+            border-bottom: 2px solid var(--border-color);
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .browser-action-btn {
+            background: #1a1d24;
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .browser-action-btn:active {
+            background: #00ff66;
+            color: #14161d;
+        }
+        .browser-url-input {
+            flex-grow: 1;
+            background: #1a1d24;
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+        .browser-indicator-badge {
+            color: #ff0055;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border: 1px solid #ff0055;
+            padding: 2px 4px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
 
-        /* VIEWPORT ENGINE AND SCROLL TRACK CONFIG */
-        .browser-viewport-wrapper {
-            padding: 0;
-            background: #000;
-            line-height: 0;
-            height: 352px; /* Set to match native Spotify embed player structural heights */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+        /* VIEWPORT ENGINE AND SCROLL TRACK CONFIG */
+        .browser-viewport-wrapper {
+            padding: 0;
+            background: #000;
+            line-height: 0;
+            height: 352px; /* Set to match native Spotify embed player structural heights */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #guestSpotifyPlayer {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
 
-        /* MOUSE POINTER RENDERING RULES */
-        @media (hover: hover) and (pointer: fine) {
-            * { cursor: none !important; }
-            .custom-cursor {
-                width: 20px; height: 20px;
-                border: 2px solid #ff0055;
-                border-radius: 50%;
-                position: fixed;
-                transform: translate(-50%, -50%);
-                pointer-events: none;
-                z-index: 10000;
-                display: block;
-            }
-            .custom-cursor::after {
-                content: '';
-                width: 4px; height: 4px;
-                background: #ff0055;
-                border-radius: 50%;
-                position: absolute;
-                top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-            }
-        }
+        /* MOUSE POINTER RENDERING RULES */
+        @media (hover: hover) and (pointer: fine) {
+            * { cursor: none !important; }
+            .custom-cursor {
+                width: 20px; height: 20px;
+                border: 2px solid #ff0055;
+                border-radius: 50%;
+                position: fixed;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                z-index: 10000;
+                display: block;
+            }
+            .custom-cursor::after {
+                content: '';
+                width: 4px; height: 4px;
+                background: #ff0055;
+                border-radius: 50%;
+                position: absolute;
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
 
-        @media (hover: none) {
-            .custom-cursor { display: none !important; }
-            * { cursor: auto !important; }
-        }
+        @media (hover: none) {
+            .custom-cursor { display: none !important; }
+            * { cursor: auto !important; }
+        }
 
-        /* LIVE STATUS BADGE UI */
-        .status-badge {
-            display: inline-flex; align-items: center;
-            background: var(--border-color); color: var(--bg-color);
-            padding: 6px 14px; border-radius: 20px;
-            font-size: 0.9rem; font-weight: bold; margin-top: 15px;
-            border: 2px solid var(--border-color);
-        }
-        .status-dot {
-            width: 8px; height: 8px; background-color: #1DB954;
-            border-radius: 50%; margin-right: 8px;
-            animation: statusPulse 2s infinite;
-        }
+        /* LIVE STATUS BADGE UI */
+        .status-badge {
+            display: inline-flex; align-items: center;
+            background: var(--border-color); color: var(--bg-color);
+            padding: 6px 14px; border-radius: 20px;
+            font-size: 0.9rem; font-weight: bold; margin-top: 15px;
+            border: 2px solid var(--border-color);
+        }
+        .status-dot {
+            width: 8px; height: 8px; background-color: #1DB954;
+            border-radius: 50%; margin-right: 8px;
+            animation: statusPulse 2s infinite;
+        }
 
-        .theme-toggle-container { text-align: right; margin-bottom: 10px; }
-        .theme-btn {
-            background: var(--border-color); color: var(--bg-color);
-            border: 2px solid var(--border-color); padding: 6px 14px;
-            font-weight: bold; border-radius: 6px;
-            box-shadow: 3px 3px 0px var(--border-color);
-        }
+        .theme-toggle-container { text-align: right; margin-bottom: 10px; }
+        .theme-btn {
+            background: var(--border-color); color: var(--bg-color);
+            border: 2px solid var(--border-color); padding: 6px 14px;
+            font-weight: bold; border-radius: 6px;
+            box-shadow: 3px 3px 0px var(--border-color);
+        }
 
-        /* RETRO SNAKE CONFIGURATIONS */
-        .arcade-box-body { background: #0d0e12; padding: 15px; text-align: center; color: #00ff66; }
-        .canvas-container { display: inline-block; background: #14161d; border: 2px solid #00ff66; padding: 2px; line-height: 0; }
-        #snakeCanvas { background: #1a1d24; max-width: 100%; }
-        .arcade-controls { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 45px); gap: 6px; justify-content: center; }
-        .arcade-btn {
-            background: #14161d; color: #00ff66; border: 2px solid #00ff66;
-            font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 1.2rem;
-            border-radius: 4px; cursor: pointer; user-select: none;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .arcade-btn:active { background: #00ff66; color: #0d0e12; }
+        /* RETRO SNAKE CONFIGURATIONS */
+        .arcade-box-body { background: #0d0e12; padding: 15px; text-align: center; color: #00ff66; }
+        .canvas-container { display: inline-block; background: #14161d; border: 2px solid #00ff66; padding: 2px; line-height: 0; }
+        #snakeCanvas { background: #1a1d24; max-width: 100%; }
+        .arcade-controls { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 45px); gap: 6px; justify-content: center; }
+        .arcade-btn {
+            background: #14161d; color: #00ff66; border: 2px solid #00ff66;
+            font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 1.2rem;
+            border-radius: 4px; cursor: pointer; user-select: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .arcade-btn:active { background: #00ff66; color: #0d0e12; }
 
-        /* General Styling Base Layout */
-        body {
-            font-family: 'Courier New', Courier, monospace; line-height: 1.6;
-            color: var(--text-color); max-width: 800px; margin: 0 auto; padding: 40px 20px;
-            background-image: url('1000076205.jpg'); background-size: cover; background-attachment: fixed;
-            background-color: var(--bg-color); transition: background-color 0.3s, color 0.3s;
-        }
+        /* General Styling Base Layout */
+        body {
+            font-family: 'Courier New', Courier, monospace; line-height: 1.6;
+            color: var(--text-color); max-width: 800px; margin: 0 auto; padding: 40px 20px;
+            background-image: url('1000076205.jpg'); background-size: cover; background-attachment: fixed;
+            background-color: var(--bg-color); transition: background-color 0.3s, color 0.3s;
+        }
 
-        h1 { font-size: 3rem; margin-bottom: 10px; color: var(--header-color); animation: rgbTextGlow 6s infinite linear; display: inline-block; }
-        h1:hover { animation: textGlitch 0.3s infinite linear; }
-        h2 { font-size: 1.8rem; border-bottom: 3px solid var(--border-color); padding-bottom: 5px; margin-top: 50px; color: var(--header-color); }
-        .subtitle { font-size: 1.2rem; color: var(--text-color); font-style: italic; font-weight: bold; }
+        h1 { font-size: 3rem; margin-bottom: 10px; color: var(--header-color); animation: rgbTextGlow 6s infinite linear; display: inline-block; }
+        h1:hover { animation: textGlitch 0.3s infinite linear; }
+        h2 { font-size: 1.8rem; border-bottom: 3px solid var(--border-color); padding-bottom: 5px; margin-top: 50px; color: var(--header-color); }
+        .subtitle { font-size: 1.2rem; color: var(--text-color); font-style: italic; font-weight: bold; }
 
-        .about-btn, .qr-btn {
-            background: var(--border-color); color: var(--bg-color);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: bold;
-            padding: 12px 24px; border: 3px solid var(--bg-color); border-radius: 8px;
-            box-shadow: 4px 4px 0px var(--border-color); margin-top: 15px;
-        }
+        .about-btn, .qr-btn {
+            background: var(--border-color); color: var(--bg-color);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: bold;
+            padding: 12px 24px; border: 3px solid var(--bg-color); border-radius: 8px;
+            box-shadow: 4px 4px 0px var(--border-color); margin-top: 15px;
+        }
 
-        .info-panel { display: none; max-width: 500px; margin: 20px auto; text-align: left; background-color: var(--panel-bg); }
-        .info-panel.show { display: block; }
-        .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.2); }
+        .info-panel { display: none; max-width: 500px; margin: 20px auto; text-align: left; background-color: var(--panel-bg); }
+        .info-panel.show { display: block; }
+        .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.2); }
 
-        .project-card, .timeline-item, blockquote, footer, .info-panel, .payment-card { 
-            border: 3px solid var(--border-color); padding: 20px; margin: 20px 0; border-radius: 12px; 
-            animation: rgbFullGlow 9s infinite ease-in-out; transition: transform 0.2s ease; color: #222; 
-        }
+        .project-card, .timeline-item, blockquote, footer, .info-panel, .payment-card { 
+            border: 3px solid var(--border-color); padding: 20px; margin: 20px 0; border-radius: 12px; 
+            animation: rgbFullGlow 9s infinite ease-in-out; transition: transform 0.2s ease; color: #222; 
+        }
 
-        .project-card:hover, .timeline-item:hover { transform: translateY(-5px) scale(1.01); }
-        .socials-box a, .contact-card a { color: #000; font-weight: bold; text-decoration: underline; }
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
-        .skill-tag { background: var(--border-color); color: var(--bg-color); padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; }
+        .project-card:hover, .timeline-item:hover { transform: translateY(-5px) scale(1.01); }
+        .socials-box a, .contact-card a { color: #000; font-weight: bold; text-decoration: underline; }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .skill-tag { background: var(--border-color); color: var(--bg-color); padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; }
 
-        img { max-width: 100%; height: auto; border: 3px solid var(--border-color); border-radius: 8px; margin-top: 15px; filter: invert(var(--invert-val)); }
+        img { max-width: 100%; height: auto; border: 3px solid var(--border-color); border-radius: 8px; margin-top: 15px; filter: invert(var(--invert-val)); }
 
-        .qr-code { max-width: 250px; display: none; margin: 15px auto 0 auto; }
-        .qr-code.show { display: block; }
-        .timeline { display: flex; flex-direction: column; gap: 35px; }
-    </style>
+        .qr-code { max-width: 250px; display: none; margin: 15px auto 0 auto; }
+        .qr-code.show { display: block; }
+        .timeline { display: flex; flex-direction: column; gap: 35px; }
+    </style>
 </head>
 <body>
 
-    <div class="crt-overlay"></div>
-    <div class="custom-cursor" id="gameCursor"></div>
+    <div class="crt-overlay"></div>
+    <div class="custom-cursor" id="gameCursor"></div>
 
-    <div id="gameWidgetBtn" class="draggable-widget" title="Launch YSN Arcade Engine [Key: G]">🎮</div>
-    <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify Core Engine [Key: M]">🎵</div>
+    <div id="gameWidgetBtn" class="draggable-widget" title="Launch YSN Arcade Engine [Key: G]">🎮</div>
+    <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify Core Engine [Key: M]">🎵</div>
 
-    <div id="arcadePanel" class="arcade-panel-box">
-        <div class="panel-ui-header" id="arcadeHeader">
-            <span>SNAKE_CORE.EXE v3.1</span>
-            <button class="panel-ui-close" onclick="toggleArcadePanel()">X</button>
-        </div>
-        <div class="arcade-box-body">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; text-align: space-between; display: flex; justify-content: space-between;">
-                <span>Score: <span id="currentScore" style="color:#00ff66">0</span></span>
-                <span>Max: <span id="highScore" style="color:#ff0055">0</span></span>
-            </div>
+    <div id="arcadePanel" class="arcade-panel-box">
+        <div class="panel-ui-header" id="arcadeHeader">
+            <span>SNAKE_CORE.EXE v3.1</span>
+            <button class="panel-ui-close" onclick="toggleArcadePanel()">X</button>
+        </div>
+        <div class="arcade-box-body">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; text-align: space-between; display: flex; justify-content: space-between;">
+                <span>Score: <span id="currentScore" style="color:#00ff66">0</span></span>
+                <span>Max: <span id="highScore" style="color:#ff0055">0</span></span>
+            </div>
 
-            <div class="canvas-container">
-                <canvas id="snakeCanvas" width="280" height="180"></canvas>
-            </div>
+            <div class="canvas-container">
+                <canvas id="snakeCanvas" width="280" height="180"></canvas>
+            </div>
 
-            <div class="arcade-controls">
-                <div style="grid-column: 2;"><button class="arcade-btn" onclick="changeDirection('UP')">▲</button></div>
-                <div style="grid-column: 1; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('LEFT')">◀</button></div>
-                <div style="grid-column: 2; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('DOWN')">▼</button></div>
-                <div style="grid-column: 3; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('RIGHT')">▶</button></div>
-            </div>
-        </div>
-    </div>
+            <div class="arcade-controls">
+                <div style="grid-column: 2;"><button class="arcade-btn" onclick="changeDirection('UP')">▲</button></div>
+                <div style="grid-column: 1; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('LEFT')">◀</button></div>
+                <div style="grid-column: 2; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('DOWN')">▼</button></div>
+                <div style="grid-column: 3; grid-row: 2;"><button class="arcade-btn" onclick="changeDirection('RIGHT')">▶</button></div>
+            </div>
+        </div>
+    </div>
 
-    <div id="musicPanel" class="arcade-panel-box">
-        <div class="panel-ui-header" id="musicHeader">
-            <span>GUEST_TAB.EXE - Spotify Section</span>
-            <button class="panel-ui-close" onclick="toggleMusicPanel()">X</button>
-        </div>
+    <div id="musicPanel" class="arcade-panel-box">
+        <div class="panel-ui-header" id="musicHeader">
+            <span>GUEST_TAB.EXE - Spotify Section</span>
+            <button class="panel-ui-close" onclick="toggleMusicPanel()">X</button>
+        </div>
 
-        <div class="browser-navigation-bar">
-            <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?si=JEZufwpvRJ6OWeCkG6CdEg" target="_blank" class="browser-action-btn" title="Open full 550+ songs in Spotify">🚀 Full App</a>
-            <input type="text" class="browser-url-input" id="browserAddressString" value="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC" readonly>
-            <div class="browser-indicator-badge">🔒 Guest</div>
-        </div>
+        <div class="browser-navigation-bar">
+            <button class="browser-action-btn" onclick="browserControlReload()" title="Reload Tab">🔄</button>
+            <button class="browser-action-btn" onclick="browserControlHome()" title="Go Home">🏠</button>
+            <input type="text" class="browser-url-input" id="browserAddressString" value="" title="Search or type URL and press enter">
+            <div class="browser-indicator-badge">🔒 Guest</div>
+        </div>
 
-        <div class="browser-viewport-wrapper">
-            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&si=36fef58a016b4091" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        </div>
-    </div>
+        <div class="browser-viewport-wrapper">
+            <iframe 
+                id="guestSpotifyPlayer"
+                src="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                referrerpolicy="no-referrer">
+            </iframe>
+        </div>
+    </div>
 
-    <div class="theme-toggle-container">
-        <button class="theme-btn" onclick="toggleMatrixTheme()">⚡ Switch Terminal Mode [Key: T]</button>
-    </div>
+    <div class="theme-toggle-container">
+        <button class="theme-btn" onclick="toggleMatrixTheme()">⚡ Switch Terminal Mode [Key: T]</button>
+    </div>
 
-    <header style="text-align: center;">
-        <h1>Hey, I'm Yeasin! <span id="waveEmoji" onclick="waveBack()" style="cursor: pointer; display: inline-block; user-select: none;">👋</span></h1>
-        <p class="subtitle">Student by day, GenZ market observer by night, and full-time tech/media enthusiast.</p>
+    <header style="text-align: center;">
+        <h1>Hey, I'm Yeasin! <span id="waveEmoji" onclick="waveBack()" style="cursor: pointer; display: inline-block; user-select: none;">👋</span></h1>
+        <p class="subtitle">Student by day, GenZ market observer by night, and full-time tech/media enthusiast.</p>
 
-        <div class="status-badge">
-            <div class="status-dot"></div>
-            <span id="liveStatusText">Live Sync: Analyzing market trends 📈</span>
-        </div>
-        <br>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span id="liveStatusText">Live Sync: Analyzing market trends 📈</span>
+        </div>
+        <br>
 
-        <button class="about-btn" onclick="toggleAboutPanel()">✨ Press For Quick Intel [Key: A]</button>
+        <button class="about-btn" onclick="toggleAboutPanel()">✨ Press For Quick Intel [Key: A]</button>
 
-        <div id="aboutPanel" class="info-panel">
-            <h3 style="margin-top: 0; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">📋 Personal File</h3>
-            <div class="info-row"><strong>Full Name:</strong> <span>Mohammad Yeasin Alam</span></div>
-            <div class="info-row"><strong>D.O.B:</strong> <span>06/08/2008</span></div>
-            <div class="info-row"><strong>Religion:</strong> <span>Islam</span></div>
-            <div class="info-row"><strong>Height:</strong> <span>5.5 Feet</span></div>
-            <div class="info-row"><strong>Social Spec:</strong> <span>Introvert 🤫</span></div>
-            <div class="info-row"><strong>Base Station:</strong> <span>Bihar, India 🇮🇳</span></div>
-            <div class="info-row"><strong>Education:</strong> <span>Science (PCB) 🧪</span></div>
-            <div class="info-row"><strong>Goat Game:</strong> <span>Football ⚽</span></div>
-            <div class="info-row"><strong>Contact 1:</strong> <span>+91 9229182600</span></div>
-            <div class="info-row"><strong>Contact 2:</strong> <span>+91 8102445540</span></div>
-        </div>
+        <div id="aboutPanel" class="info-panel">
+            <h3 style="margin-top: 0; text-align: center; border-bottom: 2px solid var(--border-color); padding-bottom: 5px;">📋 Personal File</h3>
+            <div class="info-row"><strong>Full Name:</strong> <span>Mohammad Yeasin Alam</span></div>
+            <div class="info-row"><strong>D.O.B:</strong> <span>06/08/2008</span></div>
+            <div class="info-row"><strong>Religion:</strong> <span>Islam</span></div>
+            <div class="info-row"><strong>Height:</strong> <span>5.5 Feet</span></div>
+            <div class="info-row"><strong>Social Spec:</strong> <span>Introvert 🤫</span></div>
+            <div class="info-row"><strong>Base Station:</strong> <span>Bihar, India 🇮🇳</span></div>
+            <div class="info-row"><strong>Education:</strong> <span>Science (PCB) 🧪</span></div>
+            <div class="info-row"><strong>Goat Game:</strong> <span>Football ⚽</span></div>
+            <div class="info-row"><strong>Contact 1:</strong> <span>+91 9229182600</span></div>
+            <div class="info-row"><strong>Contact 2:</strong> <span>+91 8102445540</span></div>
+        </div>
 
-        <div style="margin: 30px 0;">
-            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam looking sharp next to a waterfall">
-            <p style="font-size: 0.85rem; text-align: center; font-weight: bold; margin-top: 10px;">^ Me pretending to look deep while actually thinking about my next travel destination.</p>
-        </div>
-    </header>
+        <div style="margin: 30px 0;">
+            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam looking sharp next to a waterfall">
+            <p style="font-size: 0.85rem; text-align: center; font-weight: bold; margin-top: 10px;">^ Me pretending to look deep while actually thinking about my next travel destination.</p>
+        </div>
+    </header>
 
-    <section>
-        <h2>Who is this guy? 🤔</h2>
-        <p>I am <strong>Mohammad Yeasin Alam</strong>. Currently navigating the wild world of being a student, but honestly, I wear a lot of hats. If you can't find me studying, I'm probably doing one of three things:</p>
-        <ul>
-            <li>🎮 <strong>Gaming:</strong> Either playing them, watching gameplay streams, or figuring out how they work.</li>
-            <li>🍿 <strong>Binge-Watching:</strong> Deep into a movie rabbit hole or finishing a web series in one sitting.</li>
-            <li>🗣️ <strong>Connecting:</strong> Talking to people, learning what makes them tick, and observing how our generation interacts online.</li>
-        </ul>
+    <section>
+        <h2>Who is this guy? 🤔</h2>
+        <p>I am <strong>Mohammad Yeasin Alam</strong>. Currently navigating the wild world of being a student, but honestly, I wear a lot of hats. If you can't find me studying, I'm probably doing one of three things:</p>
+        <ul>
+            <li>🎮 <strong>Gaming:</strong> Either playing them, watching gameplay streams, or figuring out how they work.</li>
+            <li>🍿 <strong>Binge-Watching:</strong> Deep into a movie rabbit hole or finishing a web series in one sitting.</li>
+            <li>🗣️ <strong>Connecting:</strong> Talking to people, learning what makes them tick, and observing how our generation interacts online.</li>
+        </ul>
 
-        <blockquote>
-            <strong>My Personal Philosophy:</strong> I like to hear everyone else's statement about a situation first. I don't talk too much—I listen, analyze, and then figure out the smartest move. Maximize listening, minimize noise. 🤫
-        </blockquote>
-    </section>
+        <blockquote>
+            <strong>My Personal Philosophy:</strong> I like to hear everyone else's statement about a situation first. I don't talk too much—I listen, analyze, and then figure out the smartest move. Maximize listening, minimize noise. 🤫
+        </blockquote>
+    </section>
 
-    <section>
-        <h2>Things I’m Passionate About ✨</h2>
+    <section>
+        <h2>Things I’m Passionate About ✨</h2>
 
-        <div class="project-card">
-            <h3>📸 Photography</h3>
-            <p>Capturing moments is my ultimate hobby. Whether it’s landscapes, travel aesthetic shots, or just freezing a memory in time, I like things to look clean. Scroll down to see my aging timeline!</p>
-        </div>
+        <div class="project-card">
+            <h3>📸 Photography</h3>
+            <p>Capturing moments is my ultimate hobby. Whether it’s landscapes, travel aesthetic shots, or just freezing a memory in time, I like things to look clean. Scroll down to see my aging timeline!</p>
+        </div>
 
-        <div class="project-card">
-            <h3>💼 The Future Business Mogul</h3>
-            <p>My ultimate passion is to become a businessman. I like understanding numbers, tracking how trends move, and figuring out what people actually want to buy. The dream? Building something big enough to fund my other big passion—exploring the world.</p>
-        </div>
-    </section>
-
-    <section>
-        <h2>Aging Timeline & Memories ⏳</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <h3>📍 Outdoor Exploration</h3>
-                <p>Trips to scenic landscapes and open fields in Bihar.</p>
-                <img src="1000076205.jpg" alt="Outdoor scenic vibes">
-            </div>
-            <div class="timeline-item">
-                <h3>📍 Continuous Learning</h3>
-                <p>Balancing tech, books, and sports.</p>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Skills & Toolkit 🛠️</h2>
-        <div class="skills-grid">
-            <div class="skill-tag">Web Dev</div>
-            <div class="skill-tag">Market Analysis</div>
-            <div class="skill-tag">Gaming</div>
-            <div class="skill-tag">Photography</div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Support The Vision ☕</h2>
-        <div class="payment-card" style="text-align: center;">
-            <p>Support my journey and future projects:</p>
-            <button class="qr-btn" onclick="toggleQRCode()">Show Payment QR</button>
-            <img src="qr_code.png" id="paymentQR" class="qr-code" alt="Payment QR Code">
-        </div>
-    </section>
-
-    <footer>
-        <div class="contact-card" style="text-align: center;">
-            <h3>Let's Connect 🤝</h3>
-            <p>Email / Phone: +91 9229182600</p>
-            <div class="socials-box" style="margin-top: 10px;">
-                <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?si=JEZufwpvRJ6OWeCkG6CdEg" target="_blank">Listen to Complete Playlist on Spotify</a>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Custom Mouse Pointer
-        const cursor = document.getElementById('gameCursor');
-        window.addEventListener('mousemove', (e) => {
-            if (cursor) {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-            }
-        });
-
-        // Theme Toggle
-        function toggleMatrixTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                document.documentElement.removeAttribute('data-theme');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        }
-
-        // Wave Emoji Animation
-        function waveBack() {
-            const emoji = document.getElementById('waveEmoji');
-            emoji.classList.remove('waving-animation');
-            void emoji.offsetWidth;
-            emoji.classList.add('waving-animation');
-        }
-
-        // Panels
-        function toggleAboutPanel() {
-            document.getElementById('aboutPanel').classList.toggle('show');
-        }
-        function toggleArcadePanel() {
-            document.getElementById('arcadePanel').classList.toggle('show');
-        }
-        function toggleMusicPanel() {
-            document.getElementById('musicPanel').classList.toggle('show');
-        }
-        function toggleQRCode() {
-            document.getElementById('paymentQR').classList.toggle('show');
-        }
-
-        // Keyboard Shortcuts
-        window.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-            const key = e.key.toUpperCase();
-            if (key === 'T') toggleMatrixTheme();
-            if (key === 'A') toggleAboutPanel();
-            if (key === 'G') toggleArcadePanel();
-            if (key === 'M') toggleMusicPanel();
-        });
-
-        // Retro Snake Game Engine
-        const canvas = document.getElementById('snakeCanvas');
-        const ctx = canvas.getContext('2d');
-        const grid = 10;
-        let count = 0;
-        let score = 0;
-        let maxScore = 0;
-
-        let snake = {
-            x: 140,
-            y: 90,
-            dx: grid,
-            dy: 0,
-            cells: [],
-            maxCells: 4
-        };
-        let apple = { x: 70, y: 70 };
-
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-
-        function resetSnake() {
-            snake.x = 140;
-            snake.y = 90;
-            snake.cells = [];
-            snake.maxCells = 4;
-            snake.dx = grid;
-            snake.dy = 0;
-            score = 0;
-            document.getElementById('currentScore').innerText = score;
-            apple.x = getRandomInt(0, 28) * grid;
-            apple.y = getRandomInt(0, 18) * grid;
-        }
-
-        function changeDirection(dir) {
-            if (dir === 'UP' && snake.dy === 0) { snake.dy = -grid; snake.dx = 0; }
-            else if (dir === 'DOWN' && snake.dy === 0) { snake.dy = grid; snake.dx = 0; }
-            else if (dir === 'LEFT' && snake.dx === 0) { snake.dx = -grid; snake.dy = 0; }
-            else if (dir === 'RIGHT' && snake.dx === 0) { snake.dx = grid; snake.dy = 0; }
-        }
-
-        function gameLoop() {
-            requestAnimationFrame(gameLoop);
-            if (++count < 6) return;
-            count = 0;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            snake.x += snake.dx;
-            snake.y += snake.dy;
-
-            if (snake.x < 0) snake.x = canvas.width - grid;
-            else if (snake.x >= canvas.width) snake.x = 0;
-            if (snake.y < 0) snake.y = canvas.height - grid;
-            else if (snake.y >= canvas.height) snake.y = 0;
-
-            snake.cells.unshift({ x: snake.x, y: snake.y });
-            if (snake.cells.length > snake.maxCells) snake.cells.pop();
-
-            ctx.fillStyle = '#ff0055';
-            ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
-
-            ctx.fillStyle = '#00ff66';
-            snake.cells.forEach((cell, index) => {
-                ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
-                if (cell.x === apple.x && cell.y === apple.y) {
-                    snake.maxCells++;
-                    score++;
-                    document.getElementById('currentScore').innerText = score;
-                    if (score > maxScore) {
-                        maxScore = score;
-                        document.getElementById('highScore').innerText = maxScore;
-                    }
-                    apple.x = getRandomInt(0, 28) * grid;
-                    apple.y = getRandomInt(0, 18) * grid;
-                }
-                for (let i = index + 1; i < snake.cells.length; i++) {
-                    if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-                        resetSnake();
-                    }
-                }
-            });
-        }
-        requestAnimationFrame(gameLoop);
-    </script>
-</body>
-</html>
+        <div class="project-card">
+            <h3>💼 The Future Business Mogul</h3>
+            <p>My ultimate passion is to become a businessman. I like understanding numbers, tracking how trends move, and figuring out what people actually want to buy. The dream? Building something big enough to fund my <em>other</em> big passion...<
