@@ -134,7 +134,7 @@
         .draggable-widget {
             position: fixed;
             width: 58px; height: 58px;
-            background: rgba(20, 24, 38, 0.65);
+            background: rgba(20, 24, 38, 0.7);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
@@ -143,7 +143,7 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            z-index: 999;
+            z-index: 10000;
             user-select: none;
             touch-action: none;
             transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -155,14 +155,19 @@
             box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
         }
 
+        .draggable-widget.active-widget {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px var(--accent-green);
+        }
+
         #gameWidgetBtn { bottom: 25px; right: 25px; }
         #musicWidgetBtn { bottom: 25px; right: 95px; }
         #colorWidgetBtn { bottom: 25px; right: 165px; }
 
-        /* MODAL GLASS PANELS */
+        /* MODAL GLASS PANELS (MULTI-WINDOW SUPPORT) */
         .arcade-panel-box {
             position: fixed;
-            width: 450px;
+            width: 440px;
             max-width: calc(100% - 30px);
             background: var(--glass-card-bg);
             backdrop-filter: blur(25px);
@@ -175,23 +180,24 @@
             overflow: hidden;
         }
 
+        /* Independent default positions for multi-tab view */
         #arcadePanel { bottom: 95px; right: 25px; }
-        #musicPanel { bottom: 95px; right: 25px; }
-        #colorPanel { bottom: 95px; right: 25px; width: 380px; }
+        #musicPanel { bottom: 95px; right: 75px; }
+        #colorPanel { bottom: 95px; right: 125px; width: 380px; }
 
         .arcade-panel-box.show {
             display: block;
-            animation: panelFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: panelFadeIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes panelFadeIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            from { opacity: 0; transform: translateY(15px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .panel-ui-header {
             background: rgba(255, 255, 255, 0.05);
-            padding: 12px 18px;
+            padding: 12px 16px;
             font-weight: 700;
             display: flex; justify-content: space-between; align-items: center;
             cursor: move;
@@ -199,6 +205,12 @@
             user-select: none;
             font-size: 0.9rem;
             letter-spacing: 0.5px;
+        }
+
+        .panel-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .panel-ui-close {
@@ -485,16 +497,18 @@
     <canvas id="bgCanvas"></canvas>
     <div class="crt-overlay"></div>
 
-    <!-- 3 FLOATING ACTION WIDGETS -->
-    <div id="colorWidgetBtn" class="draggable-widget" title="Change Background & Animations [Key: C]">🎨</div>
-    <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify [Key: M]">🎵</div>
-    <div id="gameWidgetBtn" class="draggable-widget" title="Launch Gen-Z Arcade [Key: G]">🎮</div>
+    <!-- 3 FLOATING ACTION WIDGETS (TAP TO OPEN / MINIMIZE) -->
+    <div id="colorWidgetBtn" class="draggable-widget" title="Toggle FX & Background [Key: C]">🎨</div>
+    <div id="musicWidgetBtn" class="draggable-widget" title="Toggle Spotify Music [Key: M]">🎵</div>
+    <div id="gameWidgetBtn" class="draggable-widget" title="Toggle Arcade Hub [Key: G]">🎮</div>
 
     <!-- 1. COLOR & ANIMATION ENGINE POPUP PANEL -->
-    <div id="colorPanel" class="arcade-panel-box">
+    <div id="colorPanel" class="arcade-panel-box" onclick="focusPanel(this)">
         <div class="panel-ui-header" id="colorHeader">
             <span>🎨 FX & COLOR_CORE.EXE</span>
-            <button class="panel-ui-close" onclick="toggleColorPanel()">✕</button>
+            <div class="panel-header-actions">
+                <button class="panel-ui-close" onclick="toggleColorPanel()" title="Minimize">_</button>
+            </div>
         </div>
         <div class="color-panel-body">
             <p style="font-size: 0.85rem; opacity: 0.8; margin: 0;">Type any color (e.g. <i>crimson, #0d0f18</i>) or <b>'rgb'</b>:</p>
@@ -525,10 +539,12 @@
     </div>
 
     <!-- 2. ARCADE MULTI-GAME PANEL -->
-    <div id="arcadePanel" class="arcade-panel-box">
+    <div id="arcadePanel" class="arcade-panel-box" onclick="focusPanel(this)">
         <div class="panel-ui-header" id="arcadeHeader">
-            <span>ARCADE_HUB.EXE</span>
-            <button class="panel-ui-close" onclick="toggleArcadePanel()">✕</button>
+            <span>🎮 ARCADE_HUB.EXE</span>
+            <div class="panel-header-actions">
+                <button class="panel-ui-close" onclick="toggleArcadePanel()" title="Minimize">_</button>
+            </div>
         </div>
 
         <nav class="game-tabs-nav">
@@ -567,14 +583,17 @@
     </div>
 
     <!-- 3. SPOTIFY MUSIC PANEL -->
-    <div id="musicPanel" class="arcade-panel-box">
+    <div id="musicPanel" class="arcade-panel-box" onclick="focusPanel(this)">
         <div class="panel-ui-header" id="musicHeader">
-            <span>SPOTIFY_FLOW.WAV</span>
-            <button class="panel-ui-close" onclick="toggleMusicPanel()">✕</button>
+            <span>🎵 SPOTIFY_FLOW.WAV</span>
+            <div class="panel-header-actions">
+                <button class="panel-ui-close" style="background: rgba(255, 0, 85, 0.2); font-size: 0.75rem; width: auto; padding: 2px 8px; border-radius: 6px;" onclick="stopMusicCompletely()" title="Stop Music Completely">⏹ Off</button>
+                <button class="panel-ui-close" onclick="toggleMusicPanel()" title="Minimize / Hide">_</button>
+            </div>
         </div>
 
         <div class="browser-navigation-bar">
-            <button class="glass-btn" style="padding: 4px 8px; font-size: 0.8rem;" onclick="browserControlReload()" title="Reload">🔄</button>
+            <button class="glass-btn" style="padding: 4px 8px; font-size: 0.8rem;" onclick="browserControlReload()" title="Reload Playlist">🔄</button>
             <input type="text" class="browser-url-input" id="browserAddressString" value="">
         </div>
 
@@ -1005,7 +1024,7 @@
         }
 
         /* ----------------------------------------------------
-           2. COLOR POPUP & SWATCH CONTROLLER
+           2. COLOR & SWATCH CONTROLLER
         ----------------------------------------------------- */
         const searchInput = document.getElementById('colorSearchInput');
 
@@ -1026,19 +1045,78 @@
             applyColor(this.value);
         });
 
+        /* ----------------------------------------------------
+           3. MULTI-WINDOW TOGGLES & BACKGROUND MUSIC PERSISTENCE
+        ----------------------------------------------------- */
+        let highestZ = 1001;
+        function focusPanel(panelEl) {
+            highestZ++;
+            panelEl.style.zIndex = highestZ;
+        }
+
+        // Toggle Color Panel
         function toggleColorPanel() {
             const panel = document.getElementById("colorPanel");
+            const btn = document.getElementById("colorWidgetBtn");
             panel.classList.toggle("show");
             if (panel.classList.contains("show")) {
-                document.getElementById("arcadePanel").classList.remove("show");
-                document.getElementById("musicPanel").classList.remove("show");
+                focusPanel(panel);
+                btn.classList.add("active-widget");
                 setTimeout(() => searchInput.focus(), 100);
+            } else {
+                btn.classList.remove("active-widget");
             }
         }
 
-        /* ----------------------------------------------------
-           3. UI TOGGLES & DRAGGING
-        ----------------------------------------------------- */
+        // Toggle Arcade Game Panel
+        function toggleArcadePanel() {
+            const panel = document.getElementById("arcadePanel");
+            const btn = document.getElementById("gameWidgetBtn");
+            panel.classList.toggle("show");
+            if (panel.classList.contains("show")) {
+                focusPanel(panel);
+                btn.classList.add("active-widget");
+                if (currentGame === 'surfer') initSurfer();
+            } else {
+                btn.classList.remove("active-widget");
+            }
+        }
+
+        // Toggle Music Panel without stopping playback
+        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator";
+        function toggleMusicPanel() {
+            const panel = document.getElementById("musicPanel");
+            const player = document.getElementById("guestSpotifyPlayer");
+            const btn = document.getElementById("musicWidgetBtn");
+
+            panel.classList.toggle("show");
+
+            if (panel.classList.contains("show")) {
+                focusPanel(panel);
+                btn.classList.add("active-widget");
+                // Only load if not already playing
+                if (!player.src || player.src === "about:blank") {
+                    player.src = spotifyHomeUrl;
+                    document.getElementById("browserAddressString").value = spotifyHomeUrl;
+                }
+            } else {
+                // When minimized: WE KEEP MUSIC PLAYING (do NOT clear player.src)
+                btn.classList.remove("active-widget");
+            }
+        }
+
+        // Manual absolute stop for music
+        function stopMusicCompletely() {
+            const player = document.getElementById("guestSpotifyPlayer");
+            player.src = "";
+            document.getElementById("musicWidgetBtn").classList.remove("active-widget");
+        }
+
+        function browserControlReload() {
+            const player = document.getElementById("guestSpotifyPlayer");
+            player.src = document.getElementById("browserAddressString").value || spotifyHomeUrl;
+        }
+
         function toggleAboutPanel() { document.getElementById("aboutPanel").classList.toggle("show"); }
         function toggleQrCode() { document.getElementById("paymentQr").classList.toggle("show"); }
         function toggleTerminalTheme() {
@@ -1053,35 +1131,9 @@
             setTimeout(() => wave.classList.remove('waving-animation'), 1100);
         }
 
-        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator";
-        function toggleMusicPanel() {
-            const panel = document.getElementById("musicPanel");
-            const player = document.getElementById("guestSpotifyPlayer");
-            panel.classList.toggle("show");
-            if (panel.classList.contains("show")) {
-                document.getElementById("arcadePanel").classList.remove("show");
-                document.getElementById("colorPanel").classList.remove("show");
-                if (!player.src) player.src = spotifyHomeUrl;
-                document.getElementById("browserAddressString").value = spotifyHomeUrl;
-            } else {
-                player.src = "";
-            }
-        }
-        function browserControlReload() {
-            const player = document.getElementById("guestSpotifyPlayer");
-            player.src = document.getElementById("browserAddressString").value || spotifyHomeUrl;
-        }
-
-        function toggleArcadePanel() {
-            const panel = document.getElementById("arcadePanel");
-            panel.classList.toggle("show");
-            if (panel.classList.contains("show")) {
-                document.getElementById("musicPanel").classList.remove("show");
-                document.getElementById("colorPanel").classList.remove("show");
-                if (currentGame === 'surfer') initSurfer();
-            }
-        }
-
+        /* ----------------------------------------------------
+           4. DRAGGABLE ENGINE (CLICK = TOGGLE / DRAG = MOVE)
+        ----------------------------------------------------- */
         function makeElementDraggable(el, headerEl) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, isDragging = false;
             headerEl.onmousedown = startDrag;
@@ -1089,6 +1141,7 @@
 
             function startDrag(e) {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                focusPanel(el);
                 pos3 = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
                 pos4 = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
                 isDragging = false;
@@ -1102,7 +1155,7 @@
                 let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
                 pos1 = pos3 - clientX;
                 pos2 = pos4 - clientY;
-                if (Math.abs(pos1) > 2 || Math.abs(pos2) > 2) isDragging = true;
+                if (Math.abs(pos1) > 3 || Math.abs(pos2) > 3) isDragging = true;
                 pos3 = clientX;
                 pos4 = clientY;
                 el.style.top = (el.offsetTop - pos2) + "px";
@@ -1117,9 +1170,9 @@
             return { wasDragged: () => isDragging };
         }
 
-        const dragArcade = makeElementDraggable(document.getElementById("arcadePanel"), document.getElementById("arcadeHeader"));
-        const dragMusic = makeElementDraggable(document.getElementById("musicPanel"), document.getElementById("musicHeader"));
-        const dragColor = makeElementDraggable(document.getElementById("colorPanel"), document.getElementById("colorHeader"));
+        makeElementDraggable(document.getElementById("arcadePanel"), document.getElementById("arcadeHeader"));
+        makeElementDraggable(document.getElementById("musicPanel"), document.getElementById("musicHeader"));
+        makeElementDraggable(document.getElementById("colorPanel"), document.getElementById("colorHeader"));
 
         const dragGameBtn = makeElementDraggable(document.getElementById("gameWidgetBtn"), document.getElementById("gameWidgetBtn"));
         const dragMusicBtn = makeElementDraggable(document.getElementById("musicWidgetBtn"), document.getElementById("musicWidgetBtn"));
@@ -1130,7 +1183,7 @@
         document.getElementById("colorWidgetBtn").addEventListener('click', () => { if(!dragColorBtn.wasDragged()) toggleColorPanel(); });
 
         /* ----------------------------------------------------
-           4. ARCADE MULTI-GAME ENGINE (SURFER, RACER, SHOOTER, SNAKE, PUZZLE)
+           5. ARCADE MULTI-GAME ENGINE (SURFER, RACER, SHOOTER, SNAKE, PUZZLE)
         ----------------------------------------------------- */
         let currentGame = 'surfer';
         const canvas = document.getElementById("arcadeCanvas");
@@ -1468,7 +1521,7 @@
         }
 
         /* ----------------------------------------------------
-           5. GLOBAL HOTKEYS
+           6. GLOBAL HOTKEYS
         ----------------------------------------------------- */
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
