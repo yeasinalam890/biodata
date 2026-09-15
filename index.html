@@ -105,7 +105,7 @@
             border-radius: 50%;
             font-size: 28px;
             display: flex; align-items: center; justify-content: center;
-            cursor: move;
+            cursor: pointer;
             box-shadow: 4px 4px 0px #000;
             z-index: 999;
             user-select: none;
@@ -118,7 +118,7 @@
         /* MOVABLE INTERACTIVE WINDOWS */
         .arcade-panel-box {
             position: fixed;
-            width: 340px;
+            width: 360px;
             max-width: calc(100% - 40px);
             background: var(--panel-bg);
             border: 3px solid var(--border-color);
@@ -130,7 +130,6 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Default position layers */
         #arcadePanel { bottom: 100px; right: 25px; touch-action: none; }
         #musicPanel { bottom: 100px; right: 25px; }
 
@@ -154,7 +153,7 @@
             color: var(--bg-color); font-weight: bold; font-size: 16px;
         }
 
-        /* RETRO MINI BROWSER UI BAR CONFIGS */
+        /* MINI BROWSER UI BAR CONFIGS */
         .browser-navigation-bar {
             background: #14161d;
             border-bottom: 2px solid var(--border-color);
@@ -170,26 +169,29 @@
             color: #00ff66;
             border-radius: 4px;
             padding: 2px 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-decoration: none;
+            font-family: monospace;
+            white-space: nowrap;
         }
-        .browser-action-btn:active {
+        .browser-action-btn:hover {
             background: #00ff66;
             color: #14161d;
         }
-        .browser-url-input {
-            flex-grow: 1;
+        .browser-url-select {
             background: #1a1d24;
             border: 1px solid #00ff66;
             color: #00ff66;
             font-family: monospace;
             font-size: 0.75rem;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             outline: none;
+            flex-grow: 1;
         }
         .browser-indicator-badge {
             color: #ff0055;
@@ -206,7 +208,7 @@
             padding: 0;
             background: #000;
             line-height: 0;
-            height: 352px; /* Set to match native Spotify embed player structural heights */
+            height: 380px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -265,6 +267,7 @@
             border: 2px solid var(--border-color); padding: 6px 14px;
             font-weight: bold; border-radius: 6px;
             box-shadow: 3px 3px 0px var(--border-color);
+            cursor: pointer;
         }
 
         /* RETRO SNAKE CONFIGURATIONS */
@@ -284,7 +287,6 @@
         body {
             font-family: 'Courier New', Courier, monospace; line-height: 1.6;
             color: var(--text-color); max-width: 800px; margin: 0 auto; padding: 40px 20px;
-            background-image: url('1000076205.jpg'); background-size: cover; background-attachment: fixed;
             background-color: var(--bg-color); transition: background-color 0.3s, color 0.3s;
         }
 
@@ -298,6 +300,7 @@
             font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: bold;
             padding: 12px 24px; border: 3px solid var(--bg-color); border-radius: 8px;
             box-shadow: 4px 4px 0px var(--border-color); margin-top: 15px;
+            cursor: pointer;
         }
 
         .info-panel { display: none; max-width: 500px; margin: 20px auto; text-align: left; background-color: var(--panel-bg); }
@@ -315,9 +318,6 @@
         .skill-tag { background: var(--border-color); color: var(--bg-color); padding: 10px; text-align: center; font-weight: bold; border-radius: 6px; }
 
         img { max-width: 100%; height: auto; border: 3px solid var(--border-color); border-radius: 8px; margin-top: 15px; filter: invert(var(--invert-val)); }
-
-        .qr-code { max-width: 250px; display: none; margin: 15px auto 0 auto; }
-        .qr-code.show { display: block; }
         .timeline { display: flex; flex-direction: column; gap: 35px; }
     </style>
 </head>
@@ -326,16 +326,17 @@
     <div class="crt-overlay"></div>
     <div class="custom-cursor" id="gameCursor"></div>
 
-    <div id="gameWidgetBtn" class="draggable-widget" title="Launch YSN Arcade Engine [Key: G]">🎮</div>
-    <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify Core Engine [Key: M]">🎵</div>
+    <div id="gameWidgetBtn" class="draggable-widget" title="Launch YSN Arcade Engine [Key: G]" onclick="toggleArcadePanel()">🎮</div>
+    <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify Core Engine [Key: M]" onclick="toggleMusicPanel()">🎵</div>
 
+    <!-- ARCADE MODAL WINDOW -->
     <div id="arcadePanel" class="arcade-panel-box">
         <div class="panel-ui-header" id="arcadeHeader">
             <span>SNAKE_CORE.EXE v3.1</span>
             <button class="panel-ui-close" onclick="toggleArcadePanel()">X</button>
         </div>
         <div class="arcade-box-body">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; text-align: space-between; display: flex; justify-content: space-between;">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between;">
                 <span>Score: <span id="currentScore" style="color:#00ff66">0</span></span>
                 <span>Max: <span id="highScore" style="color:#ff0055">0</span></span>
             </div>
@@ -353,23 +354,35 @@
         </div>
     </div>
 
+    <!-- SPOTIFY MULTI-VOLUME 1000 TRACK VAULT -->
     <div id="musicPanel" class="arcade-panel-box">
         <div class="panel-ui-header" id="musicHeader">
-            <span>GUEST_TAB.EXE - Spotify Section</span>
+            <span>SPOTIFY_VAULT.EXE (1000 MAX)</span>
             <button class="panel-ui-close" onclick="toggleMusicPanel()">X</button>
         </div>
 
         <div class="browser-navigation-bar">
-            <button class="browser-action-btn" onclick="browserControlReload()" title="Reload Tab">🔄</button>
-            <button class="browser-action-btn" onclick="browserControlHome()" title="Go Home">🏠</button>
-            <input type="text" class="browser-url-input" id="browserAddressString" value="" title="Search or type URL and press enter">
-            <div class="browser-indicator-badge">🔒 Guest</div>
+            <!-- Replace the sample IDs with your actual Spotify Playlist IDs -->
+            <select class="browser-url-select" id="playlistVolumeSelect" onchange="switchPlaylistVolume(this.value)">
+                <option value="37i9dQZF1DXcBWIGoYBM5M">Vol 1 (Tracks 1 - 100)</option>
+                <option value="37i9dQZF1DX0XUsuxWHRQd">Vol 2 (Tracks 101 - 200)</option>
+                <option value="37i9dQZF1DX4WYpdgoIcn6">Vol 3 (Tracks 201 - 300)</option>
+                <option value="37i9dQZF1DX1lVhptIYRda">Vol 4 (Tracks 301 - 400)</option>
+                <option value="37i9dQZF1DX4sWSpwq3LiO">Vol 5 (Tracks 401 - 500)</option>
+                <option value="37i9dQZF1DX10zKzsJ2jva">Vol 6 (Tracks 501 - 600)</option>
+                <option value="37i9dQZF1DX4JAvHpjipBk">Vol 7 (Tracks 601 - 700)</option>
+                <option value="37i9dQZF1DX4o1oenSJRJd">Vol 8 (Tracks 701 - 800)</option>
+                <option value="37i9dQZF1DWXRqgorJj26U">Vol 9 (Tracks 801 - 900)</option>
+                <option value="37i9dQZF1DX2sWbuHHzzKi">Vol 10 (Tracks 901 - 1000)</option>
+            </select>
+            <a id="spotifyDirectLink" href="https://open.spotify.com" target="_blank" class="browser-action-btn" title="Open Complete 550+ Library in Spotify">🚀 Full App</a>
+            <div class="browser-indicator-badge">1000 MAX</div>
         </div>
 
         <div class="browser-viewport-wrapper">
             <iframe 
                 id="guestSpotifyPlayer"
-                src="" 
+                src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
@@ -409,7 +422,7 @@
         </div>
 
         <div style="margin: 30px 0;">
-            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam looking sharp next to a waterfall">
+            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam looking sharp next to a waterfall" onerror="this.style.display='none'">
             <p style="font-size: 0.85rem; text-align: center; font-weight: bold; margin-top: 10px;">^ Me pretending to look deep while actually thinking about my next travel destination.</p>
         </div>
     </header>
@@ -433,362 +446,162 @@
 
         <div class="project-card">
             <h3>📸 Photography</h3>
-            <p>Capturing moments is my ultimate hobby. Whether it’s landscapes, travel aesthetic shots, or just freezing a memory in time, I like things to look clean. Scroll down to see my aging timeline!</p>
+            <p>Capturing moments is my ultimate hobby. Whether it’s landscapes, travel aesthetic shots, or just freezing a memory in time, I like things to look clean.</p>
         </div>
 
         <div class="project-card">
             <h3>💼 The Future Business Mogul</h3>
-            <p>My ultimate passion is to become a businessman. I like understanding numbers, tracking how trends move, and figuring out what people actually want to buy. The dream? Building something big enough to fund my <em>other</em> big passion...</p>
-        </div>
-
-        <div class="project-card">
-            <h3>✈️ Worldwide Traveling</h3>
-            <p>I don't just want to stay in one place. I want to see the world, experience new cultures, and take my photography gear global. Life is too short to look at the same scenery forever.</p>
+            <p>My ultimate passion is to become a businessman. I like understanding numbers, tracking how trends move, and figuring out what people actually want to buy.</p>
         </div>
     </section>
 
-    <section>
-        <h2>What I’m Actually Good At 🛠️</h2>
-        <p>Sometimes I pay attention in class and online. Here is my current toolkit of skills:</p>
-        <div class="skills-grid">
-            <div class="skill-tag">📈 Analyst</div>
-            <div class="skill-tag">🧾 Accountancy</div>
-            <div class="skill-tag">🤖 AI Expert</div>
-            <div class="skill-tag">⚡ GenZ Market Expert</div>
-        </div>
-    </section>
-
-    <section>
-        <h2>The Evolution of Yeasin (A Visual History) ⏳</h2>
-        <p>Kantwon has his research archive; I have my visual archive. Here is how I went from a tiny kid in the fields to standing by waterfalls.</p>
-
-        <div class="timeline">
-            <div class="timeline-item">
-                <h3>1. The Field Days (The Beginning)</h3>
-                <img src="1000076199.jpg" alt="Little Yeasin in the fields">
-            </div>
-
-            <div class="timeline-item">
-                <h3>2. The "Early Tech & Gaming" Era</h3>
-                <img src="1000076193.jpg" alt="Young Yeasin playing games on a phone">
-                <p style="margin-top: 10px;"><em>Spoiler alert: This is where my obsession with online entertainment stuff started.</em></p>
-            </div>
-
-            <div class="timeline-item">
-                <h3>3. Exploring Outdoors</h3>
-                <img src="1000076198.jpg" alt="Yeasin on a boat trip">
-            </div>
-
-            <div class="timeline-item">
-                <h3>4. Squad Goals & Travel Roots</h3>
-                <img src="da37ed87-113a-4a0d-944e-1133d24214a7-1_all_25262.jpg" alt="Yeasin hanging out with friends/brothers">
-            </div>
-
-            <div class="timeline-item">
-                <h3>5. Current Look: Traveling in Style</h3>
-                <img src="1000076202.jpg" alt="Yeasin walking down a scenic path with sunglasses">
-                <p style="margin-top: 10px;">Fully leveled up. Ready for the business world and the next flight out. 🛫</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="socials-box">
-        <h2>Find Me Across The Web 🌐</h2>
-        <div class="project-card">
-            <p>🔗 <strong>Instagram:</strong> <a href="https://instagram.com/iq_yeasin_00" target="_blank">@iq_yeasin_00</a></p>
-            <p>🔗 <strong>X / Twitter:</strong> <a href="https://x.com/YeasinA15718784" target="_blank">@YeasinA15718784</a></p>
-            <p>🔗 <strong>Reddit:</strong> <a href="https://reddit.com/user/YSN_7" target="_blank">u/YSN_7</a></p>
-            <p>🔗 <strong>Spotify Playlist:</strong> <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator" target="_blank">Especial Trck 69</a></p>
-        </div>
-
-        <h2>Get In Touch Direct 📱</h2>
-        <div class="project-card contact-card">
-            <p>📞 <strong>Primary Hotline:</strong> <a href="tel:+919229182600">+91 9229182600</a></p>
-            <p>📞 <strong>Secondary Line:</strong> <a href="tel:+918102445540">+91 8102445540</a></p>
-            <br>
-            <p>💬 <strong>WhatsApp Line 1:</strong> <a href="https://wa.me/919229182600" target="_blank">Chat on WhatsApp (Primary)</a></p>
-            <p>💬 <strong>WhatsApp Line 2:</strong> <a href="https://wa.me/918102445540" target="_blank">Chat on WhatsApp (Secondary)</a></p>
-            <br>
-            <p>🔴 <strong>Primary Email:</strong> <a href="mailto:yeasinalam890@gmail.com">yeasinalam890@gmail.com</a></p>
-            <p>🔵 <strong>Secondary Email:</strong> <a href="mailto:yeasinalam7890@gmail.com">yeasinalam7890@gmail.com</a></p>
-            <p>⚪ <strong>Rare Auxiliary Email:</strong> <a href="mailto:yeasinalam901@gmail.com">yeasinalam901@gmail.com</a></p>
-        </div>
-    </section>
-
-    <section style="text-align: center; margin-top: 50px;">
-        <h2>Fund My Travels & Tech Projects 💸</h2>
-        <div class="payment-card">
-            <p style="font-weight: bold; margin-bottom: 15px;">Scan to tip via any UPI app (GPay, PhonePe, Paytm, Navi)</p>
-
-            <button class="qr-btn" onclick="toggleQrCode()">Toggle QR Code 💳</button>
-
-            <img id="paymentQr" src="1000076222.jpg" alt="UPI QR Payment Portal" class="qr-code">
-        </div>
-    </section>
-
-    <footer>
-        <p style="text-align: center; font-weight: bold; margin: 0;">Thanks for stopping by! Let's connect and build something cool. ✌️</p>
-    </footer>
-
+    <!-- CORE SCRIPTS -->
     <script>
-        // Custom cursor tracking script
+        // Custom Mouse Cursor
         const cursor = document.getElementById('gameCursor');
-        document.addEventListener('mousemove', (e) => {
-            if(cursor) {
+        window.addEventListener('mousemove', (e) => {
+            if (cursor) {
                 cursor.style.left = e.clientX + 'px';
                 cursor.style.top = e.clientY + 'px';
             }
         });
 
-        function toggleAboutPanel() {
-            var panel = document.getElementById("aboutPanel");
-            panel.classList.toggle("show");
-        }
-
-        function toggleQrCode() {
-            var qr = document.getElementById("paymentQr");
-            qr.classList.toggle("show");
-        }
-
-        function toggleArcadePanel() {
-            var panel = document.getElementById("arcadePanel");
-            panel.classList.toggle("show");
-            if(panel.classList.contains("show")) {
-                document.getElementById("musicPanel").classList.remove("show");
-            }
-        }
-
-        // CORRECT CONFIGURATION FOR EMISSION OF SPOTIFY APP PLATFORM
-        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator";
-
-        function processBrowserNavigationTarget(targetInput) {
-            const playerFrame = document.getElementById("guestSpotifyPlayer");
-            const addressString = document.getElementById("browserAddressString");
-            let cleanUrl = targetInput.trim();
-
-            if (!cleanUrl) return;
-
-            // Automatically intercepts standard URLs and morphs them into responsive iframe structures
-            if (cleanUrl.includes("spotify.com") && !cleanUrl.includes("/embed/")) {
-                cleanUrl = cleanUrl.replace("spotify.com/", "spotify.com/embed/");
-            } else if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-                if (cleanUrl.includes('.') && !cleanUrl.includes(' ')) {
-                    cleanUrl = 'https://' + cleanUrl;
-                } else {
-                    cleanUrl = 'https://www.bing.com/search?q=' + encodeURIComponent(cleanUrl);
-                }
-            }
-
-            playerFrame.src = cleanUrl;
-            addressString.value = cleanUrl;
-        }
-
-        // Handle navigation actions
-        function browserControlReload() {
-            const addressString = document.getElementById("browserAddressString");
-            processBrowserNavigationTarget(addressString.value || spotifyHomeUrl);
-        }
-
-        function browserControlHome() {
-            processBrowserNavigationTarget(spotifyHomeUrl);
-        }
-
-        // Listen for Search Address bar 'Enter' keystrokes 
-        document.getElementById("browserAddressString").addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                processBrowserNavigationTarget(this.value);
-            }
-        });
-
-        // Main window view loop logic handles tab opening lifecycle triggers
-        function toggleMusicPanel() {
-            var panel = document.getElementById("musicPanel");
-            var playerFrame = document.getElementById("guestSpotifyPlayer");
-            var addressString = document.getElementById("browserAddressString");
-
-            panel.classList.toggle("show");
-
-            if(panel.classList.contains("show")) {
-                document.getElementById("arcadePanel").classList.remove("show");
-                processBrowserNavigationTarget(spotifyHomeUrl);
-            } else {
-                playerFrame.src = "";
-            }
-        }
-
+        // Matrix Theme Toggle
         function toggleMatrixTheme() {
-            const body = document.documentElement;
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
             } else {
-                body.setAttribute('data-theme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
             }
         }
 
-        // Interactive configurations
+        // Wave Emoji Animation
         function waveBack() {
-            const wave = document.getElementById('waveEmoji');
-            wave.classList.add('waving-animation');
-            setTimeout(() => wave.classList.remove('waving-animation'), 1200);
+            const emoji = document.getElementById('waveEmoji');
+            emoji.classList.remove('waving-animation');
+            void emoji.offsetWidth;
+            emoji.classList.add('waving-animation');
         }
 
-        // Draggable configuration setup
-        function makeElementDraggable(el, headerEl) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            let isDragging = false;
-
-            headerEl.onmousedown = dragMouseDown;
-            headerEl.ontouchstart = dragMouseDown;
-
-            function dragMouseDown(e) {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-
-                e = e || window.event;
-                if(e.type !== 'touchstart') e.preventDefault();
-                pos3 = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-                pos4 = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-                isDragging = false;
-
-                document.onmouseup = closeDragElement;
-                document.ontouchend = closeDragElement;
-                document.onmousemove = elementDrag;
-                document.ontouchmove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e = e || window.event;
-                let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-                let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-
-                pos1 = pos3 - clientX;
-                pos2 = pos4 - clientY;
-
-                if (Math.abs(pos1) > 1 || Math.abs(pos2) > 1) {
-                    isDragging = true;
-                }
-
-                pos3 = clientX;
-                pos4 = clientY;
-                el.style.top = (el.offsetTop - pos2) + "px";
-                el.style.left = (el.offsetLeft - pos1) + "px";
-                el.style.bottom = 'auto';
-                el.style.right = 'auto';
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                document.ontouchend = null;
-                document.ontouchmove = null;
-            }
-
-            return {
-                wasDragged: () => isDragging
-            };
+        // About Panel Toggle
+        function toggleAboutPanel() {
+            const panel = document.getElementById('aboutPanel');
+            panel.classList.toggle('show');
         }
 
-        const arcadeDragInstance = makeElementDraggable(document.getElementById("arcadePanel"), document.getElementById("arcadeHeader"));
-        const musicPanelDragInstance = makeElementDraggable(document.getElementById("musicPanel"), document.getElementById("musicHeader"));
-
-        const gameBtnDragInstance = makeElementDraggable(document.getElementById("gameWidgetBtn"), document.getElementById("gameWidgetBtn"));
-        const musicBtnDragInstance = makeElementDraggable(document.getElementById("musicWidgetBtn"), document.getElementById("musicWidgetBtn"));
-
-        // Trigger clicks for floating buttons
-        document.getElementById("gameWidgetBtn").addEventListener('click', (e) => {
-            if (!gameBtnDragInstance.wasDragged()) {
-                toggleArcadePanel();
-            }
-        });
-
-        document.getElementById("musicWidgetBtn").addEventListener('click', (e) => {
-            if (!musicBtnDragInstance.wasDragged()) {
-                toggleMusicPanel();
-            }
-        });
-
-        // Keyboard hotkeys tracking logic setup AND Snake directional listeners
-        document.addEventListener('keydown', (e) => {
-            // If typing into search bar, don't trigger hotkeys or turn snake
-            if (e.target.tagName === 'INPUT') return; 
-
-            // SMART TV REMOTE LAYER CAPTURING ENGINE (Supports KeyNames & absolute hardware keyCodes)
-            const inputToken = e.key;
-            const inputSignal = e.keyCode || e.which;
-
-            if (inputToken === 'ArrowLeft' || inputToken === 'Left' || inputSignal === 37) {
-                e.preventDefault();
-                changeDirection('LEFT');
-            } else if (inputToken === 'ArrowUp' || inputToken === 'Up' || inputSignal === 38) {
-                e.preventDefault();
-                changeDirection('UP');
-            } else if (inputToken === 'ArrowRight' || inputToken === 'Right' || inputSignal === 39) {
-                e.preventDefault();
-                changeDirection('RIGHT');
-            } else if (inputToken === 'ArrowDown' || inputToken === 'Down' || inputSignal === 40) {
-                e.preventDefault();
-                changeDirection('DOWN');
-            }
-
-            // Universal interface shortcuts
-            if (inputToken.toLowerCase() === 't') toggleMatrixTheme();
-            if (inputToken.toLowerCase() === 'g') toggleArcadePanel();
-            if (inputToken.toLowerCase() === 'm') toggleMusicPanel();
-            if (inputToken.toLowerCase() === 'a') toggleAboutPanel();
-        });
-
-        // Basic Retro Snake implementation properties
-        const canvas = document.getElementById("snakeCanvas");
-        const ctx = canvas.getContext("2d");
-        let score = 0, hScore = 0;
-        let snake = [{x: 140, y: 90}];
-        let dx = 10, dy = 0;
-        let foodX, foodY;
-
-        function mainLoop() {
-            if (hasGameEnded()) {
-                snake = [{x: 140, y: 90}];
-                dx = 10; dy = 0; score = 0;
-                document.getElementById("currentScore").innerText = score;
-                createFood();
-            }
-            setTimeout(function onTick() {
-                clearCanvas();
-                drawFood();
-                advanceSnake();
-                drawSnake();
-                mainLoop();
-            }, 120);
+        // Arcade Panel Toggle
+        function toggleArcadePanel() {
+            const panel = document.getElementById('arcadePanel');
+            panel.classList.toggle('show');
         }
 
-        function clearCanvas() { ctx.fillStyle = "#1a1d24"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
-        function drawSnake() { snake.forEach(part => { ctx.fillStyle = '#00ff66'; ctx.fillRect(part.x, part.y, 10, 10); }); }
-        function advanceSnake() {
-            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
-            snake.unshift(head);
-            if (snake[0].x === foodX && snake[0].y === foodY) {
-                score += 10;
-                document.getElementById("currentScore").innerText = score;
-                if(score > hScore) { hScore = score; document.getElementById("highScore").innerText = hScore; }
-                createFood();
-            } else { snake.pop(); }
+        // Music Panel Toggle
+        function toggleMusicPanel() {
+            const panel = document.getElementById('musicPanel');
+            panel.classList.toggle('show');
+        }
+
+        // Spotify Switcher Function
+        function switchPlaylistVolume(playlistId) {
+            const player = document.getElementById('guestSpotifyPlayer');
+            player.src = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`;
+        }
+
+        // Keyboard Shortcuts
+        window.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            const key = e.key.toUpperCase();
+            if (key === 'T') toggleMatrixTheme();
+            if (key === 'A') toggleAboutPanel();
+            if (key === 'G') toggleArcadePanel();
+            if (key === 'M') toggleMusicPanel();
+        });
+
+        // Basic Snake Game Engine
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        const grid = 10;
+        let count = 0;
+        let score = 0;
+        let maxScore = 0;
+
+        let snake = {
+            x: 140,
+            y: 90,
+            dx: grid,
+            dy: 0,
+            cells: [],
+            maxCells: 4
+        };
+        let apple = { x: 70, y: 70 };
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function resetSnake() {
+            snake.x = 140;
+            snake.y = 90;
+            snake.cells = [];
+            snake.maxCells = 4;
+            snake.dx = grid;
+            snake.dy = 0;
+            score = 0;
+            document.getElementById('currentScore').innerText = score;
+            apple.x = getRandomInt(0, 28) * grid;
+            apple.y = getRandomInt(0, 18) * grid;
         }
 
         function changeDirection(dir) {
-            if (dir === 'LEFT' && dx === 0) { dx = -10; dy = 0; }
-            if (dir === 'UP' && dy === 0) { dx = 0; dy = -10; }
-            if (dir === 'RIGHT' && dx === 0) { dx = 10; dy = 0; }
-            if (dir === 'DOWN' && dy === 0) { dx = 0; dy = 10; }
+            if (dir === 'UP' && snake.dy === 0) { snake.dy = -grid; snake.dx = 0; }
+            else if (dir === 'DOWN' && snake.dy === 0) { snake.dy = grid; snake.dx = 0; }
+            else if (dir === 'LEFT' && snake.dx === 0) { snake.dx = -grid; snake.dy = 0; }
+            else if (dir === 'RIGHT' && snake.dx === 0) { snake.dx = grid; snake.dy = 0; }
         }
 
-        function randomTen(min, max) { return Math.round((Math.random() * (max-min) + min) / 10) * 10; }
-        function createFood() { foodX = randomTen(0, canvas.width - 10); foodY = randomTen(0, canvas.height - 10); }
-        function drawFood() { ctx.fillStyle = '#ff0055'; ctx.fillRect(foodX, foodY, 10, 10); }
-        function hasGameEnded() {
-            for (let i = 4; i < snake.length; i++) { if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true; }
-            return snake[0].x < 0 || snake[0].x > canvas.width - 10 || snake[0].y < 0 || snake[0].y > canvas.height - 10;
+        function gameLoop() {
+            requestAnimationFrame(gameLoop);
+            if (++count < 6) return;
+            count = 0;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            snake.x += snake.dx;
+            snake.y += snake.dy;
+
+            if (snake.x < 0) snake.x = canvas.width - grid;
+            else if (snake.x >= canvas.width) snake.x = 0;
+            if (snake.y < 0) snake.y = canvas.height - grid;
+            else if (snake.y >= canvas.height) snake.y = 0;
+
+            snake.cells.unshift({ x: snake.x, y: snake.y });
+            if (snake.cells.length > snake.maxCells) snake.cells.pop();
+
+            ctx.fillStyle = '#ff0055';
+            ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+            ctx.fillStyle = '#00ff66';
+            snake.cells.forEach((cell, index) => {
+                ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+                if (cell.x === apple.x && cell.y === apple.y) {
+                    snake.maxCells++;
+                    score++;
+                    document.getElementById('currentScore').innerText = score;
+                    if (score > maxScore) {
+                        maxScore = score;
+                        document.getElementById('highScore').innerText = maxScore;
+                    }
+                    apple.x = getRandomInt(0, 28) * grid;
+                    apple.y = getRandomInt(0, 18) * grid;
+                }
+                for (let i = index + 1; i < snake.cells.length; i++) {
+                    if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+                        resetSnake();
+                    }
+                }
+            });
         }
-        createFood();
-        mainLoop();
+        requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
