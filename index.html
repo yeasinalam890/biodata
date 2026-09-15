@@ -475,7 +475,7 @@
             box-shadow: 0 0 10px var(--accent-green);
         }
 
-        .socials-box a, .contact-card a { color: var(--accent-cyan); font-weight: bold; text-decoration: none; }
+        .socials-box a, .contact-card a { color: var(--accent-cyan); font-weight: bold; text-decoration: none; word-break: break-all; }
         .socials-box a:hover, .contact-card a:hover { text-decoration: underline; color: var(--accent-pink); }
     </style>
 </head>
@@ -617,6 +617,9 @@
                 <div class="info-row"><strong>Goat Game:</strong> <span>Football ⚽</span></div>
                 <div class="info-row"><strong>Contact 1:</strong> <span>+91 9229182600</span></div>
                 <div class="info-row"><strong>Contact 2:</strong> <span>+91 8102445540</span></div>
+                <div class="info-row"><strong>Primary Mail:</strong> <span>yeasinalam890@gmail.com</span></div>
+                <div class="info-row"><strong>Secondary Mail:</strong> <span>yeasinalam7890@gmail.com</span></div>
+                <div class="info-row"><strong>Auxiliary Mail:</strong> <span>yeasinalam901@gmail.com</span></div>
             </div>
 
             <div style="margin: 35px 0;">
@@ -712,7 +715,10 @@
             <div class="project-card contact-card">
                 <p>📞 <strong>Hotline:</strong> <a href="tel:+919229182600">+91 9229182600</a> / <a href="tel:+918102445540">+91 8102445540</a></p>
                 <p>💬 <strong>WhatsApp:</strong> <a href="https://wa.me/919229182600" target="_blank">Chat Line 1</a> | <a href="https://wa.me/918102445540" target="_blank">Chat Line 2</a></p>
+                <br>
                 <p>✉️ <strong>Primary Mail:</strong> <a href="mailto:yeasinalam890@gmail.com">yeasinalam890@gmail.com</a></p>
+                <p>✉️ <strong>Secondary Mail:</strong> <a href="mailto:yeasinalam7890@gmail.com">yeasinalam7890@gmail.com</a></p>
+                <p>✉️ <strong>Third Auxiliary Mail:</strong> <a href="mailto:yeasinalam901@gmail.com">yeasinalam901@gmail.com</a></p>
             </div>
         </section>
 
@@ -883,7 +889,6 @@
                 bgCtx.fillStyle = "rgba(5, 7, 12, 0.25)";
                 bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-                // Road outline
                 bgCtx.strokeStyle = "rgba(255,255,255,0.08)";
                 bgCtx.lineWidth = 2;
                 bgCtx.beginPath();
@@ -957,7 +962,6 @@
                 bgCtx.fillStyle = "rgba(5, 7, 15, 0.35)";
                 bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-                // Draw starry space
                 bgCtx.fillStyle = "#ffffff";
                 stars.forEach(s => {
                     bgCtx.fillRect(s.x, s.y, s.size, s.size);
@@ -974,7 +978,6 @@
                 const rX = rocket.x;
                 const rY = rocket.y;
 
-                // Thruster flame
                 bgCtx.fillStyle = Math.random() > 0.5 ? "#ff5500" : "#ffcc00";
                 bgCtx.beginPath();
                 bgCtx.moveTo(rX - 8, rY + 35);
@@ -983,7 +986,6 @@
                 bgCtx.closePath();
                 bgCtx.fill();
 
-                // Rocket body
                 bgCtx.fillStyle = "#e0e0e0";
                 bgCtx.beginPath();
                 bgCtx.moveTo(rX, rY - 30);
@@ -992,7 +994,6 @@
                 bgCtx.closePath();
                 bgCtx.fill();
 
-                // Window
                 bgCtx.fillStyle = "#00f2fe";
                 bgCtx.beginPath();
                 bgCtx.arc(rX, rY + 2, 4, 0, Math.PI * 2);
@@ -1455,6 +1456,7 @@
 
         function moveTile(idx) {
             const emptyIdx = puzzleTiles.indexOf('');
+            const validMoves = [idx - 1, idx + 1, idx - 3, idx + 3];
             const isRowAdjacent = Math.floor(idx / 3) === Math.floor(emptyIdx / 3) && Math.abs(idx - emptyIdx) === 1;
             const isColAdjacent = Math.abs(idx - emptyIdx) === 3;
 
