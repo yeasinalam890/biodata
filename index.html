@@ -35,6 +35,18 @@
             --scanline-display: block;
         }
 
+        /* FULLSCREEN BACKGROUND ANIMATION CANVAS */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+            display: none;
+        }
+
         /* CRT SCANLINE SHIELD EFFECT */
         .crt-overlay {
             display: var(--scanline-display);
@@ -54,7 +66,7 @@
         }
 
         body.rgb-active {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab, #ff007f, #7928ca) !important;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1f4037, #99f2c8, #0d0f18) !important;
             background-size: 400% 400% !important;
             animation: rgbCanvasAnimation 10s ease infinite !important;
         }
@@ -118,7 +130,7 @@
 
         .glass-btn:active, .about-btn:active { transform: scale(0.97); }
 
-        /* FLOATING DRAGGABLE ACTION WIDGETS (3 BUTTONS) */
+        /* FLOATING ACTION WIDGETS */
         .draggable-widget {
             position: fixed;
             width: 58px; height: 58px;
@@ -150,7 +162,7 @@
         /* MODAL GLASS PANELS */
         .arcade-panel-box {
             position: fixed;
-            width: 440px;
+            width: 450px;
             max-width: calc(100% - 30px);
             background: var(--glass-card-bg);
             backdrop-filter: blur(25px);
@@ -165,7 +177,7 @@
 
         #arcadePanel { bottom: 95px; right: 25px; }
         #musicPanel { bottom: 95px; right: 25px; }
-        #colorPanel { bottom: 95px; right: 25px; width: 360px; }
+        #colorPanel { bottom: 95px; right: 25px; width: 380px; }
 
         .arcade-panel-box.show {
             display: block;
@@ -202,16 +214,17 @@
         }
         .panel-ui-close:hover { background: var(--accent-pink); }
 
-        /* COLOR PANEL INTERIOR DESIGN */
+        /* COLOR & ANIMATION PANEL INTERIOR */
         .color-panel-body {
-            padding: 20px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 14px;
+            max-height: 480px;
+            overflow-y: auto;
         }
 
         .color-search-wrapper {
-            position: relative;
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.08);
@@ -230,23 +243,31 @@
         }
 
         .swatches-grid {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 8px;
         }
 
         .swatch-btn {
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 10px;
-            padding: 6px 12px;
+            padding: 8px 10px;
             font-size: 0.78rem;
             font-weight: 700;
             color: #fff;
             cursor: pointer;
             background: rgba(255, 255, 255, 0.08);
-            transition: transform 0.2s;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .swatch-btn:hover { transform: scale(1.05); }
+        .swatch-btn:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.15);
+        }
 
         /* ARCADE GAME SELECTOR TABS */
         .game-tabs-nav {
@@ -296,7 +317,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
-        canvas { display: block; max-width: 100%; height: auto; }
+        #arcadeCanvas { display: block; max-width: 100%; height: auto; }
 
         .arcade-controls {
             margin-top: 12px;
@@ -460,33 +481,45 @@
 </head>
 <body>
 
+    <!-- FULLSCREEN ANIMATION BACKGROUND CANVAS -->
+    <canvas id="bgCanvas"></canvas>
     <div class="crt-overlay"></div>
 
     <!-- 3 FLOATING ACTION WIDGETS -->
-    <div id="colorWidgetBtn" class="draggable-widget" title="Change Background Color [Key: C]">🎨</div>
+    <div id="colorWidgetBtn" class="draggable-widget" title="Change Background & Animations [Key: C]">🎨</div>
     <div id="musicWidgetBtn" class="draggable-widget" title="Open Spotify [Key: M]">🎵</div>
     <div id="gameWidgetBtn" class="draggable-widget" title="Launch Gen-Z Arcade [Key: G]">🎮</div>
 
-    <!-- 1. COLOR ENGINE POPUP PANEL -->
+    <!-- 1. COLOR & ANIMATION ENGINE POPUP PANEL -->
     <div id="colorPanel" class="arcade-panel-box">
         <div class="panel-ui-header" id="colorHeader">
-            <span>🎨 COLOR_ENGINE.EXE</span>
+            <span>🎨 FX & COLOR_CORE.EXE</span>
             <button class="panel-ui-close" onclick="toggleColorPanel()">✕</button>
         </div>
         <div class="color-panel-body">
-            <p style="font-size: 0.85rem; opacity: 0.8; margin: 0;">Type any color name, hex code, or <b>'rgb'</b> / <b>'mix'</b>:</p>
+            <p style="font-size: 0.85rem; opacity: 0.8; margin: 0;">Type any color (e.g. <i>crimson, #0d0f18</i>) or <b>'rgb'</b>:</p>
             <div class="color-search-wrapper">
-                <input type="text" id="colorSearchInput" placeholder="e.g. crimson, #121212, rgb, mix..." autocomplete="off">
+                <input type="text" id="colorSearchInput" placeholder="Enter color name or code..." autocomplete="off">
+            </div>
+
+            <p style="font-size: 0.82rem; font-weight: bold; opacity: 0.9; margin: 6px 0 0 0;">Dynamic Animated Backgrounds:</p>
+            <div class="swatches-grid">
+                <button class="swatch-btn" onclick="startBgAnimation('matrix')">💻 Green Binary Hacker</button>
+                <button class="swatch-btn" onclick="startBgAnimation('coins')">🪙 Falling Gold Coins</button>
+                <button class="swatch-btn" onclick="startBgAnimation('rain')">🌧️ Cyber Storm Rain</button>
+                <button class="swatch-btn" onclick="startBgAnimation('cars')">🏎️ Night Highway Cars</button>
+                <button class="swatch-btn" onclick="startBgAnimation('sea')">🌊 Deep Ocean Waves</button>
+                <button class="swatch-btn" onclick="startBgAnimation('rocket')">🚀 Rocket Launch</button>
+                <button class="swatch-btn" onclick="applyColor('rgb')">✨ Smooth RGB Shift</button>
+                <button class="swatch-btn" style="border-color: #ff0055;" onclick="stopBgAnimation()">❌ Clear Animations</button>
             </div>
             
-            <p style="font-size: 0.8rem; opacity: 0.7; margin: 5px 0 0 0;">Quick Presets:</p>
+            <p style="font-size: 0.82rem; font-weight: bold; opacity: 0.9; margin: 6px 0 0 0;">Solid Tone Presets:</p>
             <div class="swatches-grid">
-                <button class="swatch-btn" style="background: linear-gradient(90deg, #ff007f, #00f2fe);" onclick="applyColor('rgb')">🌈 RGB Flow</button>
                 <button class="swatch-btn" style="background: #0d0f18;" onclick="applyColor('#0d0f18')">Dark Slate</button>
                 <button class="swatch-btn" style="background: #1a0826;" onclick="applyColor('#1a0826')">Cyber Violet</button>
                 <button class="swatch-btn" style="background: #051a14;" onclick="applyColor('#051a14')">Neon Matrix</button>
                 <button class="swatch-btn" style="background: #2a0808;" onclick="applyColor('#2a0808')">Blood Red</button>
-                <button class="swatch-btn" style="background: #000000;" onclick="applyColor('#000000')">Pitch Black</button>
             </div>
         </div>
     </div>
@@ -494,7 +527,7 @@
     <!-- 2. ARCADE MULTI-GAME PANEL -->
     <div id="arcadePanel" class="arcade-panel-box">
         <div class="panel-ui-header" id="arcadeHeader">
-            <span>✨ ARCADE_HUB.EXE</span>
+            <span>ARCADE_HUB.EXE</span>
             <button class="panel-ui-close" onclick="toggleArcadePanel()">✕</button>
         </div>
 
@@ -699,15 +732,288 @@
 
     <script>
         /* ----------------------------------------------------
-           1. COLOR POPUP ENGINE
+           1. FULLSCREEN BACKGROUND ANIMATION SYSTEM
+        ----------------------------------------------------- */
+        const bgCanvas = document.getElementById("bgCanvas");
+        const bgCtx = bgCanvas.getContext("2d");
+        let activeBgAnimation = null;
+        let bgAnimFrameId = null;
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+        resizeBgCanvas();
+
+        function stopBgAnimation() {
+            if (bgAnimFrameId) cancelAnimationFrame(bgAnimFrameId);
+            activeBgAnimation = null;
+            bgCanvas.style.display = "none";
+            document.body.classList.remove('rgb-active');
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+        }
+
+        function startBgAnimation(type) {
+            stopBgAnimation();
+            bgCanvas.style.display = "block";
+            activeBgAnimation = type;
+
+            if (type === 'matrix') initMatrixEffect();
+            else if (type === 'coins') initCoinsEffect();
+            else if (type === 'rain') initRainEffect();
+            else if (type === 'cars') initCarsEffect();
+            else if (type === 'sea') initSeaEffect();
+            else if (type === 'rocket') initRocketEffect();
+        }
+
+        // --- ANIMATION 1: MATRIX BINARY CODE GREEN ---
+        let matrixDrops = [];
+        function initMatrixEffect() {
+            const cols = Math.floor(bgCanvas.width / 16);
+            matrixDrops = Array(cols).fill(1);
+
+            function drawMatrix() {
+                bgCtx.fillStyle = "rgba(0, 0, 0, 0.08)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.fillStyle = "#00ff66";
+                bgCtx.font = "15px monospace";
+
+                for (let i = 0; i < matrixDrops.length; i++) {
+                    const text = Math.random() > 0.5 ? "1" : "0";
+                    bgCtx.fillText(text, i * 16, matrixDrops[i] * 16);
+
+                    if (matrixDrops[i] * 16 > bgCanvas.height && Math.random() > 0.975) {
+                        matrixDrops[i] = 0;
+                    }
+                    matrixDrops[i]++;
+                }
+                if (activeBgAnimation === 'matrix') bgAnimFrameId = requestAnimationFrame(drawMatrix);
+            }
+            drawMatrix();
+        }
+
+        // --- ANIMATION 2: FALLING GOLD COINS ---
+        let coins = [];
+        function initCoinsEffect() {
+            coins = Array.from({ length: 45 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                radius: Math.random() * 8 + 10,
+                speed: Math.random() * 3 + 2,
+                spin: Math.random() * Math.PI,
+                spinSpeed: Math.random() * 0.08 + 0.03
+            }));
+
+            function drawCoins() {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                coins.forEach(c => {
+                    c.y += c.speed;
+                    c.spin += c.spinSpeed;
+                    if (c.y > bgCanvas.height + 20) {
+                        c.y = -20;
+                        c.x = Math.random() * bgCanvas.width;
+                    }
+
+                    const width = Math.cos(c.spin) * c.radius;
+                    bgCtx.beginPath();
+                    bgCtx.ellipse(c.x, c.y, Math.abs(width), c.radius, 0, 0, Math.PI * 2);
+                    bgCtx.fillStyle = "#ffd700";
+                    bgCtx.fill();
+                    bgCtx.lineWidth = 2;
+                    bgCtx.strokeStyle = "#e6a100";
+                    bgCtx.stroke();
+                });
+
+                if (activeBgAnimation === 'coins') bgAnimFrameId = requestAnimationFrame(drawCoins);
+            }
+            drawCoins();
+        }
+
+        // --- ANIMATION 3: CYBER STORM RAIN ---
+        let raindrops = [];
+        function initRainEffect() {
+            raindrops = Array.from({ length: 120 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                length: Math.random() * 20 + 15,
+                speed: Math.random() * 10 + 12
+            }));
+
+            function drawRain() {
+                bgCtx.fillStyle = "rgba(10, 14, 24, 0.3)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.strokeStyle = "rgba(0, 242, 254, 0.7)";
+                bgCtx.lineWidth = 1.8;
+
+                raindrops.forEach(r => {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(r.x, r.y);
+                    bgCtx.lineTo(r.x - 2, r.y + r.length);
+                    bgCtx.stroke();
+
+                    r.y += r.speed;
+                    r.x -= 1;
+                    if (r.y > bgCanvas.height) {
+                        r.y = -20;
+                        r.x = Math.random() * bgCanvas.width;
+                    }
+                });
+
+                if (activeBgAnimation === 'rain') bgAnimFrameId = requestAnimationFrame(drawRain);
+            }
+            drawRain();
+        }
+
+        // --- ANIMATION 4: HIGHWAY NIGHT CARS ---
+        let highwayCars = [];
+        function initCarsEffect() {
+            highwayCars = Array.from({ length: 15 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: bgCanvas.height - (Math.random() * 70 + 40),
+                speed: (Math.random() * 8 + 6) * (Math.random() > 0.5 ? 1 : -1),
+                color: Math.random() > 0.5 ? '#ff0055' : '#00f2fe',
+                trail: Math.random() * 60 + 50
+            }));
+
+            function drawCars() {
+                bgCtx.fillStyle = "rgba(5, 7, 12, 0.25)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                // Road outline
+                bgCtx.strokeStyle = "rgba(255,255,255,0.08)";
+                bgCtx.lineWidth = 2;
+                bgCtx.beginPath();
+                bgCtx.moveTo(0, bgCanvas.height - 120);
+                bgCtx.lineTo(bgCanvas.width, bgCanvas.height - 120);
+                bgCtx.stroke();
+
+                highwayCars.forEach(car => {
+                    car.x += car.speed;
+                    if (car.speed > 0 && car.x > bgCanvas.width + car.trail) car.x = -car.trail;
+                    if (car.speed < 0 && car.x < -car.trail) car.x = bgCanvas.width + car.trail;
+
+                    bgCtx.strokeStyle = car.color;
+                    bgCtx.lineWidth = 3;
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(car.x, car.y);
+                    bgCtx.lineTo(car.x - (car.speed * 8), car.y);
+                    bgCtx.stroke();
+                });
+
+                if (activeBgAnimation === 'cars') bgAnimFrameId = requestAnimationFrame(drawCars);
+            }
+            drawCars();
+        }
+
+        // --- ANIMATION 5: DEEP OCEAN SEA WAVES ---
+        let waveStep = 0;
+        function initSeaEffect() {
+            function drawSea() {
+                bgCtx.fillStyle = "rgba(4, 9, 20, 0.25)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                waveStep += 0.03;
+                const waveLayers = [
+                    { y: bgCanvas.height - 130, color: "rgba(0, 119, 182, 0.4)", amp: 25, freq: 0.008 },
+                    { y: bgCanvas.height - 85, color: "rgba(0, 180, 216, 0.5)", amp: 20, freq: 0.012 },
+                    { y: bgCanvas.height - 40, color: "rgba(144, 224, 239, 0.6)", amp: 15, freq: 0.016 }
+                ];
+
+                waveLayers.forEach(w => {
+                    bgCtx.fillStyle = w.color;
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(0, bgCanvas.height);
+                    for (let x = 0; x <= bgCanvas.width; x += 15) {
+                        const y = w.y + Math.sin(x * w.freq + waveStep) * w.amp;
+                        bgCtx.lineTo(x, y);
+                    }
+                    bgCtx.lineTo(bgCanvas.width, bgCanvas.height);
+                    bgCtx.closePath();
+                    bgCtx.fill();
+                });
+
+                if (activeBgAnimation === 'sea') bgAnimFrameId = requestAnimationFrame(drawSea);
+            }
+            drawSea();
+        }
+
+        // --- ANIMATION 6: ROCKET LAUNCH ---
+        let rocket = { x: 0, y: 0, vY: 4 };
+        let stars = [];
+        function initRocketEffect() {
+            rocket.x = bgCanvas.width * 0.85;
+            rocket.y = bgCanvas.height + 50;
+            stars = Array.from({ length: 60 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 2
+            }));
+
+            function drawRocket() {
+                bgCtx.fillStyle = "rgba(5, 7, 15, 0.35)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                // Draw starry space
+                bgCtx.fillStyle = "#ffffff";
+                stars.forEach(s => {
+                    bgCtx.fillRect(s.x, s.y, s.size, s.size);
+                    s.y += 1;
+                    if (s.y > bgCanvas.height) s.y = 0;
+                });
+
+                rocket.y -= rocket.vY;
+                if (rocket.y < -120) {
+                    rocket.y = bgCanvas.height + 60;
+                    rocket.x = Math.random() * (bgCanvas.width - 150) + 75;
+                }
+
+                const rX = rocket.x;
+                const rY = rocket.y;
+
+                // Thruster flame
+                bgCtx.fillStyle = Math.random() > 0.5 ? "#ff5500" : "#ffcc00";
+                bgCtx.beginPath();
+                bgCtx.moveTo(rX - 8, rY + 35);
+                bgCtx.lineTo(rX + 8, rY + 35);
+                bgCtx.lineTo(rX, rY + 65 + Math.random() * 20);
+                bgCtx.closePath();
+                bgCtx.fill();
+
+                // Rocket body
+                bgCtx.fillStyle = "#e0e0e0";
+                bgCtx.beginPath();
+                bgCtx.moveTo(rX, rY - 30);
+                bgCtx.lineTo(rX - 12, rY + 30);
+                bgCtx.lineTo(rX + 12, rY + 30);
+                bgCtx.closePath();
+                bgCtx.fill();
+
+                // Window
+                bgCtx.fillStyle = "#00f2fe";
+                bgCtx.beginPath();
+                bgCtx.arc(rX, rY + 2, 4, 0, Math.PI * 2);
+                bgCtx.fill();
+
+                if (activeBgAnimation === 'rocket') bgAnimFrameId = requestAnimationFrame(drawRocket);
+            }
+            drawRocket();
+        }
+
+        /* ----------------------------------------------------
+           2. COLOR POPUP & SWATCH CONTROLLER
         ----------------------------------------------------- */
         const searchInput = document.getElementById('colorSearchInput');
 
         function applyColor(val) {
             const query = val.trim().toLowerCase();
             const body = document.body;
+            stopBgAnimation();
 
-            if (query === 'rgb' || query === 'mix' || query === 'rainbow') {
+            if (query === 'rgb' || query === 'mix') {
                 body.classList.add('rgb-active');
             } else {
                 body.classList.remove('rgb-active');
@@ -730,14 +1036,10 @@
         }
 
         /* ----------------------------------------------------
-           2. UI TOGGLES & DRAGGING
+           3. UI TOGGLES & DRAGGING
         ----------------------------------------------------- */
-        function toggleAboutPanel() {
-            document.getElementById("aboutPanel").classList.toggle("show");
-        }
-        function toggleQrCode() {
-            document.getElementById("paymentQr").classList.toggle("show");
-        }
+        function toggleAboutPanel() { document.getElementById("aboutPanel").classList.toggle("show"); }
+        function toggleQrCode() { document.getElementById("paymentQr").classList.toggle("show"); }
         function toggleTerminalTheme() {
             const doc = document.documentElement;
             doc.getAttribute('data-theme') === 'terminal' 
@@ -827,7 +1129,7 @@
         document.getElementById("colorWidgetBtn").addEventListener('click', () => { if(!dragColorBtn.wasDragged()) toggleColorPanel(); });
 
         /* ----------------------------------------------------
-           3. ARCADE MULTI-GAME ENGINE (SURFER, RACER, SHOOTER, SNAKE, PUZZLE)
+           4. ARCADE MULTI-GAME ENGINE (SURFER, RACER, SHOOTER, SNAKE, PUZZLE)
         ----------------------------------------------------- */
         let currentGame = 'surfer';
         const canvas = document.getElementById("arcadeCanvas");
@@ -896,7 +1198,7 @@
             if (currentGame === 'snake') snakeControl(direction);
         }
 
-        // ================= GAME 1: SUBWAY SURFER 3D =================
+        // ================= GAME 1: 3D SURFER =================
         let surfer = { lane: 1, yOffset: 0, isJumping: false, vY: 0 };
         let surferObstacles = [], surferSpeed = 4, surferSpawnTick = 0;
         const lanesX = [60, 160, 260];
@@ -1153,7 +1455,6 @@
 
         function moveTile(idx) {
             const emptyIdx = puzzleTiles.indexOf('');
-            const validMoves = [idx - 1, idx + 1, idx - 3, idx + 3];
             const isRowAdjacent = Math.floor(idx / 3) === Math.floor(emptyIdx / 3) && Math.abs(idx - emptyIdx) === 1;
             const isColAdjacent = Math.abs(idx - emptyIdx) === 3;
 
@@ -1165,7 +1466,7 @@
         }
 
         /* ----------------------------------------------------
-           4. GLOBAL HOTKEYS
+           5. GLOBAL HOTKEYS
         ----------------------------------------------------- */
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT') return;
