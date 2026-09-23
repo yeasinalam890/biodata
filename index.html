@@ -5,398 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohammad Yeasin Alam | Doing Stuff Online & Offline</title>
     <style>
+        /* VARIABLES FOR DARK/LIGHT / THEMES */
         :root {
-            --bg-color: #0a0a0a;
-            --text-color: #ffffff;
-            --accent-color: #555555;
-            --card-bg: #121212;
-            --border-color: #222222;
+            --bg-color: #0d0f18;
+            --text-color: #f3f4f6;
+            --header-color: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-card-bg: rgba(20, 24, 38, 0.55);
             --glass-border: rgba(255, 255, 255, 0.18);
             --glass-blur: 16px;
             --accent-cyan: #00f2fe;
             --accent-pink: #ff007f;
+            --accent-purple: #7928ca;
             --accent-green: #00ff88;
+            --invert-val: 0;
+            --scanline-display: none;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        [data-theme="terminal"] {
+            --bg-color: #030a06;
+            --text-color: #00ff66;
+            --header-color: #00ff66;
+            --glass-bg: rgba(0, 255, 102, 0.05);
+            --glass-card-bg: rgba(5, 20, 10, 0.7);
+            --glass-border: rgba(0, 255, 102, 0.3);
+            --accent-cyan: #00ff66;
+            --accent-pink: #00ff66;
+            --invert-val: 1;
+            --scanline-display: block;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 4%;
-            border-bottom: 1px solid var(--border-color);
-            background-color: rgba(10, 10, 10, 0.85);
-            position: sticky;
+        /* FULLSCREEN BACKGROUND ANIMATION CANVAS */
+        #bgCanvas {
+            position: fixed;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+            display: none;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        /* CRT SCANLINE SHIELD EFFECT */
+        .crt-overlay {
+            display: var(--scanline-display);
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 99999;
+            pointer-events: none;
         }
 
-        .header-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background-color: #222;
+        /* RGB / MIX ANIMATED BACKGROUND */
+        @keyframes rgbCanvasAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .logo {
-            font-size: 1.05rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        body.rgb-active {
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1f4037, #99f2c8, #0d0f18) !important;
+            background-size: 400% 400% !important;
+            animation: rgbCanvasAnimation 10s ease infinite !important;
         }
 
-        .nav-status {
-            display: flex;
+        @keyframes actualWave {
+            0% { transform: rotate(0deg); }
+            15% { transform: rotate(16deg); }
+            30% { transform: rotate(-10deg); }
+            45% { transform: rotate(16deg); }
+            60% { transform: rotate(-5deg); }
+            75% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .waving-animation { animation: actualWave 1.1s ease-in-out; }
+
+        /* BASE STYLES */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px 60px 20px;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(121, 40, 202, 0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 860px; margin: 0 auto; }
+
+        /* GEN-Z GLASS BUTTONS */
+        .glass-btn, .about-btn, .qr-btn, .theme-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 10px 22px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00ff66;
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
-        }
-
-        /* Hero / Banner Section */
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4.5rem 4%;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .banner-profile {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .center-avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border-color);
-            background-color: #151515;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .center-avatar:hover {
-            transform: scale(1.03);
-        }
-
-        .hero h1 {
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            font-size: clamp(2.5rem, 6vw, 6rem);
-            font-weight: 900;
-            line-height: 1.05;
-        }
-
-        .hero-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-            width: 100%;
-            text-align: left;
-        }
-
-        .hero-tagline {
-            max-width: 600px;
-            color: #aaa;
-            font-size: clamp(1.1rem, 1.8vw, 1.5rem);
-        }
-
-        .hero-details {
-            align-self: center;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
-            text-align: right;
-        }
-
-        @media (max-width: 768px) {
-            .hero-meta {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                text-align: center;
-            }
-            .hero-details {
-                text-align: center;
-            }
-        }
-
-        /* About Specifications Grid */
-        .profile-info-section {
-            padding: 5rem 4%;
-            border-bottom: 1px solid var(--border-color);
-            background-color: #0c0c0c;
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-
-        .info-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .info-item {
-            border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 1rem;
-        }
-
-        .info-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #555;
-            letter-spacing: 1.5px;
-            margin-bottom: 0.25rem;
-        }
-
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #ffffff;
-            word-break: break-word;
-        }
-
-        @media (max-width: 768px) {
-            .profile-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .info-list {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        /* Image Showcase Layout */
-        .image-showcase {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            background-color: #0e0e0e;
-            padding: 4rem 4%;
-        }
-
-        @media (max-width: 768px) {
-            .image-showcase {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .portfolio-card {
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background-color: var(--card-bg);
-            overflow: hidden;
-        }
-
-        .photo-block {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            max-height: 480px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: #151515;
-            overflow: hidden;
-        }
-
-        .photo-block img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .portfolio-card:hover .photo-block img {
-            transform: scale(1.03);
-        }
-
-        .card-caption {
-            background: #121212;
-            padding: 1.5rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-        }
-
-        /* Focus / Story Section */
-        .about-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            padding: 6rem 4%;
-            border-top: 1px solid var(--border-color);
-        }
-
-        @media (max-width: 768px) {
-            .about-section {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-
-        .section-label {
-            margin-bottom: 1rem;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 0.8rem;
-        }
-
-        .story-text {
-            color: #e0e0e0;
-            line-height: 1.5;
-            font-size: clamp(1.2rem, 2.2vw, 1.7rem);
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 480px) {
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .skill-item {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--card-bg);
-            padding: 1.5rem;
-        }
-
-        .skill-item h3 {
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 1.05rem;
-        }
-
-        .skill-item p {
-            color: #777;
-            font-size: 0.9rem;
-        }
-
-        /* Contact Details Layout */
-        .contact-section {
-            background: linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
-            padding: 8rem 4%;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .contact-section h2 {
-            margin-bottom: 3rem;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 900;
-        }
-
-        .contact-channels {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            align-items: center;
-            margin: 0 auto;
-            max-width: 700px;
-        }
-
-        .contact-box {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--card-bg);
-            width: 100%;
-            padding: 1.5rem;
-        }
-
-        .channel-label {
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-        }
-
-        .contact-link {
-            color: #ffffff;
             text-decoration: none;
-            font-weight: 700;
-            font-size: clamp(1.1rem, 2.5vw, 1.8rem);
-            transition: color 0.3s ease;
-            word-break: break-all;
         }
 
-        .contact-link:hover {
-            color: #aaa;
+        .glass-btn:hover, .about-btn:hover, .qr-btn:hover, .theme-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.25);
+            color: #fff;
         }
 
-        /* FLOATING ACTION WIDGETS & MODAL PANELS */
+        .glass-btn:active, .about-btn:active { transform: scale(0.97); }
+
+        /* FLOATING ACTION WIDGETS */
         .draggable-widget {
             position: fixed;
             width: 58px; height: 58px;
-            background: rgba(20, 24, 38, 0.85);
+            background: rgba(20, 24, 38, 0.7);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
@@ -422,27 +160,39 @@
             box-shadow: 0 0 15px var(--accent-green);
         }
 
-        #musicWidgetBtn { bottom: 25px; right: 25px; }
+        #gameWidgetBtn { bottom: 25px; right: 25px; }
+        #musicWidgetBtn { bottom: 25px; right: 95px; }
+        #colorWidgetBtn { bottom: 25px; right: 165px; }
 
+        /* MODAL GLASS PANELS (MULTI-WINDOW SUPPORT) */
         .arcade-panel-box {
             position: fixed;
             width: 440px;
             max-width: calc(100% - 30px);
-            background: rgba(18, 18, 18, 0.92);
+            background: var(--glass-card-bg);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
             z-index: 1000;
             display: none;
             overflow: hidden;
         }
 
-        #musicPanel { bottom: 95px; right: 25px; }
+        /* Independent default positions for multi-tab view */
+        #arcadePanel { bottom: 95px; right: 25px; }
+        #musicPanel { bottom: 95px; right: 75px; }
+        #colorPanel { bottom: 95px; right: 125px; width: 380px; }
 
         .arcade-panel-box.show {
             display: block;
+            animation: panelFadeIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes panelFadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .panel-ui-header {
@@ -451,9 +201,10 @@
             font-weight: 700;
             display: flex; justify-content: space-between; align-items: center;
             cursor: move;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--glass-border);
             user-select: none;
             font-size: 0.9rem;
+            letter-spacing: 0.5px;
         }
 
         .panel-header-actions {
@@ -475,10 +226,66 @@
         }
         .panel-ui-close:hover { background: var(--accent-pink); }
 
+        /* COLOR & ANIMATION PANEL INTERIOR */
+        .color-panel-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .color-search-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 8px 14px;
+        }
+
+        .color-search-wrapper input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .swatches-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .swatch-btn {
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .swatch-btn:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ARCADE GAME SELECTOR TABS */
         .game-tabs-nav {
             display: flex;
-            background: rgba(0,0,0,0.4);
-            border-bottom: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid var(--glass-border);
             overflow-x: auto;
             padding: 6px;
             gap: 6px;
@@ -489,7 +296,7 @@
             color: rgba(255, 255, 255, 0.65);
             border: none;
             padding: 6px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
@@ -498,21 +305,98 @@
         }
 
         .game-tab-btn.active {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--glass-bg);
             color: #fff;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 12px rgba(0, 242, 254, 0.2);
         }
 
+        .arcade-box-body {
+            padding: 16px;
+            text-align: center;
+            color: #fff;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .canvas-container {
+            display: inline-block;
+            background: #000;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            line-height: 0;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        #arcadeCanvas { display: block; max-width: 100%; height: auto; }
+
+        .arcade-controls {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-template-rows: repeat(2, 40px);
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .arcade-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            user-select: none;
+            transition: 0.15s;
+        }
+        .arcade-btn:active { transform: scale(0.92); background: var(--accent-cyan); color: #000; }
+
+        /* PUZZLE CONTAINER */
+        #puzzleGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-gap: 8px;
+            justify-content: center;
+            margin: 15px auto;
+        }
+
+        .puzzle-tile {
+            width: 80px;
+            height: 80px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .puzzle-tile.empty {
+            background: transparent;
+            border: 1px dashed rgba(255,255,255,0.2);
+            cursor: default;
+        }
+
+        /* SPOTIFY BROWSER UI */
         .browser-navigation-bar {
             background: rgba(0, 0, 0, 0.4);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--glass-border);
             padding: 8px 12px;
             display: flex; align-items: center; gap: 8px;
         }
         .browser-url-input {
             flex-grow: 1;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             color: #fff;
             font-size: 0.75rem;
             padding: 5px 10px;
@@ -526,64 +410,191 @@
         }
         #guestSpotifyPlayer { border: none; width: 100%; height: 100%; }
 
-        /* Footer */
-        footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4rem 4%;
-            border-top: 1px solid var(--border-color);
-            color: #555;
-            font-size: 0.9rem;
+        /* GLASS CONTENT CARDS */
+        .project-card, .timeline-item, blockquote, footer, .info-panel, .payment-card { 
+            background: var(--glass-card-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+            color: var(--text-color);
         }
 
-        footer a {
-            color: #888;
-            text-decoration: none;
-            transition: color 0.2s ease;
+        .project-card:hover, .timeline-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 242, 254, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        footer a:hover {
+        .info-panel { display: none; max-width: 540px; margin: 20px auto; text-align: left; }
+        .info-panel.show { display: block; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px; margin-top: 20px;
+        }
+
+        .skill-tag {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             color: #fff;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 14px;
         }
 
-        @media (max-width: 768px) {
-            footer {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
+        img { max-width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--glass-border); margin-top: 15px; filter: invert(var(--invert-val)); }
+        .qr-code { max-width: 250px; display: none; margin: 15px auto 0 auto; }
+        .qr-code.show { display: block; }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: var(--header-color);
+            background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 70%, var(--accent-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
+
+        h2 { font-size: 1.8rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; margin-top: 50px; color: var(--header-color); }
+        .subtitle { font-size: 1.15rem; color: rgba(255,255,255,0.8); font-weight: 500; }
+
+        .status-badge {
+            display: inline-flex; align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1px solid var(--glass-border);
+            margin-top: 15px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px; background-color: var(--accent-green);
+            border-radius: 50%; margin-right: 10px;
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .socials-box a, .contact-card a { color: var(--accent-cyan); font-weight: bold; text-decoration: none; word-break: break-all; }
+        .socials-box a:hover, .contact-card a:hover { text-decoration: underline; color: var(--accent-pink); }
     </style>
 </head>
 <body>
 
-    <!-- FLOATING MUSIC WIDGET BUTTON -->
-    <div id="musicWidgetBtn" class="draggable-widget" title="Toggle Spotify Music">🎵</div>
+    <!-- FULLSCREEN ANIMATION BACKGROUND CANVAS -->
+    <canvas id="bgCanvas"></canvas>
+    <div class="crt-overlay"></div>
 
-    <!-- SPOTIFY MULTI-PART MUSIC PANEL (BYPASSES 100 TRACK LIMIT) -->
+    <!-- 3 FLOATING ACTION WIDGETS (TAP TO OPEN / MINIMIZE) -->
+    <div id="colorWidgetBtn" class="draggable-widget" title="Toggle FX & Background [Key: C]">🎨</div>
+    <div id="musicWidgetBtn" class="draggable-widget" title="Toggle Spotify Music [Key: M]">🎵</div>
+    <div id="gameWidgetBtn" class="draggable-widget" title="Toggle Arcade Hub [Key: G]">🎮</div>
+
+    <!-- 1. COLOR & ANIMATION ENGINE POPUP PANEL -->
+    <div id="colorPanel" class="arcade-panel-box" onclick="focusPanel(this)">
+        <div class="panel-ui-header" id="colorHeader">
+            <span>🎨 FX & COLOR_CORE.EXE</span>
+            <div class="panel-header-actions">
+                <button class="panel-ui-close" onclick="toggleColorPanel()" title="Minimize">_</button>
+            </div>
+        </div>
+        <div class="color-panel-body">
+            <p style="font-size: 0.85rem; opacity: 0.8; margin: 0;">Type any color (e.g. <i>crimson, #0d0f18</i>) or <b>'rgb'</b>:</p>
+            <div class="color-search-wrapper">
+                <input type="text" id="colorSearchInput" placeholder="Enter color name or code..." autocomplete="off">
+            </div>
+
+            <p style="font-size: 0.82rem; font-weight: bold; opacity: 0.9; margin: 6px 0 0 0;">Dynamic Animated Backgrounds:</p>
+            <div class="swatches-grid">
+                <button class="swatch-btn" onclick="startBgAnimation('matrix')">💻 Green Binary Hacker</button>
+                <button class="swatch-btn" onclick="startBgAnimation('coins')">🪙 Falling Gold Coins</button>
+                <button class="swatch-btn" onclick="startBgAnimation('rain')">🌧️ Cyber Storm Rain</button>
+                <button class="swatch-btn" onclick="startBgAnimation('cars')">🏎️ Night Highway Cars</button>
+                <button class="swatch-btn" onclick="startBgAnimation('sea')">🌊 Deep Ocean Waves</button>
+                <button class="swatch-btn" onclick="startBgAnimation('rocket')">🚀 Rocket Launch</button>
+                <button class="swatch-btn" onclick="applyColor('rgb')">✨ Smooth RGB Shift</button>
+                <button class="swatch-btn" style="border-color: #ff0055;" onclick="stopBgAnimation()">❌ Clear Animations</button>
+            </div>
+            
+            <p style="font-size: 0.82rem; font-weight: bold; opacity: 0.9; margin: 6px 0 0 0;">Solid Tone Presets:</p>
+            <div class="swatches-grid">
+                <button class="swatch-btn" style="background: #0d0f18;" onclick="applyColor('#0d0f18')">Dark Slate</button>
+                <button class="swatch-btn" style="background: #1a0826;" onclick="applyColor('#1a0826')">Cyber Violet</button>
+                <button class="swatch-btn" style="background: #051a14;" onclick="applyColor('#051a14')">Neon Matrix</button>
+                <button class="swatch-btn" style="background: #2a0808;" onclick="applyColor('#2a0808')">Blood Red</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ARCADE MULTI-GAME PANEL -->
+    <div id="arcadePanel" class="arcade-panel-box" onclick="focusPanel(this)">
+        <div class="panel-ui-header" id="arcadeHeader">
+            <span>🎮 ARCADE_HUB.EXE</span>
+            <div class="panel-header-actions">
+                <button class="panel-ui-close" onclick="toggleArcadePanel()" title="Minimize">_</button>
+            </div>
+        </div>
+
+        <nav class="game-tabs-nav">
+            <button class="game-tab-btn active" onclick="switchGame('surfer')">🏄 Surfer</button>
+            <button class="game-tab-btn" onclick="switchGame('racer')">🏎️ Racer</button>
+            <button class="game-tab-btn" onclick="switchGame('shooter')">🚀 Shooter</button>
+            <button class="game-tab-btn" onclick="switchGame('snake')">🐍 Snake</button>
+            <button class="game-tab-btn" onclick="switchGame('puzzle')">🧩 Puzzle</button>
+        </nav>
+
+        <div class="arcade-box-body">
+            <div style="font-weight: 700; margin-bottom: 10px; font-size: 0.95rem; display: flex; justify-content: space-between;">
+                <span>Score: <span id="arcadeScore" style="color:var(--accent-cyan)">0</span></span>
+                <span>Best: <span id="arcadeHighScore" style="color:var(--accent-pink)">0</span></span>
+            </div>
+
+            <!-- CANVAS ENGINE FOR RUNNER, RACER, SHOOTER, SNAKE -->
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="arcadeCanvas" width="320" height="240"></canvas>
+            </div>
+
+            <!-- HTML GRID FOR PUZZLE -->
+            <div id="puzzleContainer" style="display: none;">
+                <div id="puzzleGrid"></div>
+                <button class="glass-btn" style="margin-top: 10px;" onclick="initPuzzle()">🔀 Shuffle Puzzle</button>
+            </div>
+
+            <div class="arcade-controls" id="arcadeNavPads">
+                <div style="grid-column: 2;"><button class="arcade-btn" onclick="triggerControl('UP')">▲</button></div>
+                <div style="grid-column: 1; grid-row: 2;"><button class="arcade-btn" onclick="triggerControl('LEFT')">◀</button></div>
+                <div style="grid-column: 2; grid-row: 2;"><button class="arcade-btn" onclick="triggerControl('DOWN')">▼</button></div>
+                <div style="grid-column: 3; grid-row: 2;"><button class="arcade-btn" onclick="triggerControl('RIGHT')">▶</button></div>
+            </div>
+            <p id="gameHelpTip" style="font-size: 0.75rem; opacity: 0.7; margin-top: 10px;">Use Arrows / Touch buttons to play</p>
+        </div>
+    </div>
+
+    <!-- 3. SPOTIFY MUSIC PANEL -->
     <div id="musicPanel" class="arcade-panel-box" onclick="focusPanel(this)">
         <div class="panel-ui-header" id="musicHeader">
-            <span>🎵 SPOTIFY LIBRARY (All 575+ Tracks)</span>
+            <span>🎵 SPOTIFY_FLOW.WAV</span>
             <div class="panel-header-actions">
                 <button class="panel-ui-close" style="background: rgba(255, 0, 85, 0.2); font-size: 0.75rem; width: auto; padding: 2px 8px; border-radius: 6px;" onclick="stopMusicCompletely()" title="Stop Music Completely">⏹ Off</button>
                 <button class="panel-ui-close" onclick="toggleMusicPanel()" title="Minimize / Hide">_</button>
             </div>
         </div>
 
-        <!-- Playlist Chunks / Parts Tabs to load beyond the 99 limit -->
-        <div class="game-tabs-nav" id="spotifyPlaylistTabs">
-            <button class="game-tab-btn active" onclick="switchSpotifyPart(0, this)">Part 1 (1-100)</button>
-            <button class="game-tab-btn" onclick="switchSpotifyPart(1, this)">Part 2 (101-200)</button>
-            <button class="game-tab-btn" onclick="switchSpotifyPart(2, this)">Part 3 (201-300)</button>
-            <button class="game-tab-btn" onclick="switchSpotifyPart(3, this)">Part 4 (301-400)</button>
-            <button class="game-tab-btn" onclick="switchSpotifyPart(4, this)">Part 5 (401-500)</button>
-            <button class="game-tab-btn" onclick="switchSpotifyPart(5, this)">Part 6 (501-575)</button>
-        </div>
-
         <div class="browser-navigation-bar">
-            <button class="glass-btn" style="padding: 4px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.1); border:1px solid var(--border-color); color:#fff; border-radius:6px; cursor:pointer;" onclick="browserControlReload()" title="Reload">🔄</button>
-            <input type="text" class="browser-url-input" id="browserAddressString" readonly>
+            <button class="glass-btn" style="padding: 4px 8px; font-size: 0.8rem;" onclick="browserControlReload()" title="Reload Playlist">🔄</button>
+            <input type="text" class="browser-url-input" id="browserAddressString" value="">
         </div>
 
         <div class="browser-viewport-wrapper">
@@ -596,173 +607,483 @@
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav>
-        <div class="logo-area">
-            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam" class="header-avatar">
-            <div class="logo">Mohammad Yeasin Alam</div>
+    <div class="container">
+        <div style="text-align: right; margin-bottom: 15px;">
+            <button class="theme-btn" onclick="toggleTerminalTheme()">⚡ Terminal Mode [Key: T]</button>
         </div>
-        <div class="nav-status">
-            <div class="status-dot"></div>
-            <span>Online & Active</span>
-        </div>
-    </nav>
 
-    <!-- Hero / Banner Section -->
-    <header class="hero">
-        <div class="banner-profile">
-            <img src="1000076204.jpg" alt="Mohammad Yeasin Alam" class="center-avatar">
-        </div>
-        <h1>Mohammad Yeasin Alam</h1>
-        <p class="hero-tagline">Student by day, market observer by night, & digital tech enthusiast based in Bihar, India.</p>
+        <header style="text-align: center;">
+            <h1>Hey, I'm Yeasin! <span id="waveEmoji" onclick="waveBack()" style="cursor: pointer; display: inline-block; user-select: none;">👋</span></h1>
+            <p class="subtitle">Student by day, GenZ market observer by night, & tech enthusiast.</p>
 
-        <div class="hero-meta">
-            <div class="hero-details" style="text-align: left;">
-                <p>📍 Based in Bihar, India</p>
-                <p>🧪 Science (PCB) Student</p>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="liveStatusText">Live Sync: Analyzing market trends 📈</span>
             </div>
-            <div class="hero-details">
-                <p>⚽ Football Enthusiast</p>
-                <p>💼 Future Business Mogul</p>
-            </div>
-        </div>
-    </header>
+            <br><br>
 
-    <!-- About Specifications Grid -->
-    <section class="profile-info-section">
-        <div class="profile-grid">
-            <div>
-                <span class="section-label">01 / Specification</span>
-                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Personal Dossier</h2>
-                <p style="color: #888;">Core metrics and background specifications.</p>
+            <button class="about-btn" onclick="toggleAboutPanel()">✨ Quick Intel File [Key: A]</button>
+
+            <div id="aboutPanel" class="info-panel">
+                <h3 style="margin-top: 0; text-align: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">📋 Personal File</h3>
+                <div class="info-row"><strong>Full Name:</strong> <span>Mohammad Yeasin Alam</span></div>
+                <div class="info-row"><strong>D.O.B:</strong> <span>06/08/2008</span></div>
+                <div class="info-row"><strong>Religion:</strong> <span>Islam</span></div>
+                <div class="info-row"><strong>Height:</strong> <span>5.5 Feet</span></div>
+                <div class="info-row"><strong>Social Spec:</strong> <span>Introvert 🤫</span></div>
+                <div class="info-row"><strong>Base Station:</strong> <span>Bihar, India 🇮🇳</span></div>
+                <div class="info-row"><strong>Education:</strong> <span>Science (PCB) 🧪</span></div>
+                <div class="info-row"><strong>Goat Game:</strong> <span>Football ⚽</span></div>
+                <div class="info-row"><strong>Contact 1:</strong> <span>+91 9229182600</span></div>
+                <div class="info-row"><strong>Contact 2:</strong> <span>+91 8102445540</span></div>
+                <div class="info-row"><strong>Primary Mail:</strong> <span>yeasinalam890@gmail.com</span></div>
+                <div class="info-row"><strong>Secondary Mail:</strong> <span>yeasinalam7890@gmail.com</span></div>
+                <div class="info-row"><strong>Auxiliary Mail:</strong> <span>yeasinalam901@gmail.com</span></div>
             </div>
-            <div class="info-list">
-                <div class="info-item">
-                    <div class="info-label">Born</div>
-                    <div class="info-value">August 6, 2008</div>
+
+            <div style="margin: 35px 0;">
+                <img src="1000076204.jpg" alt="Mohammad Yeasin Alam looking sharp next to a waterfall">
+                <p style="font-size: 0.85rem; text-align: center; opacity: 0.8; margin-top: 10px;">^ Me pretending to look deep while actually thinking about my next travel destination.</p>
+            </div>
+        </header>
+
+        <section>
+            <h2>Who is this guy? 🤔</h2>
+            <p>I am <strong>Mohammad Yeasin Alam</strong>. Navigating the wild world of being a student, observer, and creator. When I'm offline, I'm analyzing moves; when online, I'm building experiences.</p>
+            <ul>
+                <li>🎮 <strong>Gaming:</strong> Surfer runs, shooters, and arcade mechanics.</li>
+                <li>🍿 <strong>Binge-Watching:</strong> Deep into cinematic lore and high-concept cinema.</li>
+                <li>🗣️ <strong>Connecting:</strong> Exploring digital sociology and Gen-Z trends.</li>
+            </ul>
+
+            <blockquote>
+                <strong>My Personal Philosophy:</strong> Listen first, analyze thoroughly, move with purpose. Maximize observation, minimize noise. 🤫
+            </blockquote>
+        </section>
+
+        <section>
+            <h2>Things I’m Passionate About ✨</h2>
+
+            <div class="project-card">
+                <h3>📸 Photography & Aesthetics</h3>
+                <p>Freezing fleeting moments into clean digital artifacts. Scroll down to see my aging visual timeline!</p>
+            </div>
+
+            <div class="project-card">
+                <h3>💼 Future Business Mogul</h3>
+                <p>Deep-diving into market dynamics, liquidity streams, and consumer psychology. Building value to fund bigger dreams.</p>
+            </div>
+
+            <div class="project-card">
+                <h3>✈️ Worldwide Traveling</h3>
+                <p>Experiencing unfamiliar territories, global cultures, and horizons beyond the comfort zone.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Current Skill Stack 🛠️</h2>
+            <div class="skills-grid">
+                <div class="skill-tag">📈 Market Analyst</div>
+                <div class="skill-tag">🧾 Accountancy</div>
+                <div class="skill-tag">🤖 AI Tech Stack</div>
+                <div class="skill-tag">⚡ GenZ Trends</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>The Evolution of Yeasin (Visual Archive) ⏳</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>1. The Field Days (The Beginning)</h3>
+                    <img src="1000076199.jpg" alt="Little Yeasin in the fields">
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Religion</div>
-                    <div class="info-value">Islam</div>
+
+                <div class="timeline-item">
+                    <h3>2. The "Early Tech & Gaming" Era</h3>
+                    <img src="1000076193.jpg" alt="Young Yeasin playing games on a phone">
+                    <p style="margin-top: 10px;"><em>Spoiler alert: Where the digital obsession ignited.</em></p>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Height</div>
-                    <div class="info-value">5.5 Feet</div>
+
+                <div class="timeline-item">
+                    <h3>3. Exploring Outdoors</h3>
+                    <img src="1000076198.jpg" alt="Yeasin on a boat trip">
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Personality</div>
-                    <div class="info-value">Introvert 🤫</div>
+
+                <div class="timeline-item">
+                    <h3>4. Squad Goals & Travel Roots</h3>
+                    <img src="da37ed87-113a-4a0d-944e-1133d24214a7-1_all_25262.jpg" alt="Yeasin hanging out with friends/brothers">
+                </div>
+
+                <div class="timeline-item">
+                    <h3>5. Current Era: Sharp & Focused</h3>
+                    <img src="1000076202.jpg" alt="Yeasin walking down a scenic path with sunglasses">
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Image Showcase Layout -->
-    <section class="image-showcase">
-        <div class="portfolio-card">
-            <div class="photo-block">
-                <img src="1000076199.jpg" alt="Early Days">
+        <section class="socials-box">
+            <h2>Find Me Across The Web 🌐</h2>
+            <div class="project-card">
+                <p>🔗 <strong>Instagram:</strong> <a href="https://instagram.com/iq_yeasin_00" target="_blank">@iq_yeasin_00</a></p>
+                <p>🔗 <strong>X / Twitter:</strong> <a href="https://x.com/iq_yeasin_00" target="_blank">@iq_yeasin_00</a></p>
+                <p>🔗 <strong>Reddit:</strong> <a href="https://reddit.com/user/YSN_7" target="_blank">u/YSN_7</a></p>
+                <p>🔗 <strong>Spotify:</strong> <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?si=NWoJeHEBRL2d6Bi9OZZR5A" target="_blank">Especial Trck 69</a></p>
             </div>
-            <div class="card-caption">01 — The Early Field Days</div>
-        </div>
-        <div class="portfolio-card">
-            <div class="photo-block">
-                <img src="1000076202.jpg" alt="Current Era">
-            </div>
-            <div class="card-caption">02 — Current Focus & Traveling</div>
-        </div>
-    </section>
 
-    <!-- Focus / Story Section -->
-    <section class="about-section">
-        <div>
-            <span class="section-label">02 / Philosophy</span>
-            <p class="story-text">Listen first, analyze thoroughly, move with purpose. Maximize observation, minimize noise. 🤫</p>
-        </div>
-        <div class="skills-grid">
-            <div class="skill-item">
-                <h3>Market Analyst</h3>
-                <p>Observing trends, consumer psychology, and liquidity streams.</p>
+            <h2>Get In Touch Direct 📱</h2>
+            <div class="project-card contact-card">
+                <p>📞 <strong>Hotline:</strong> <a href="tel:+919229182600">+91 9229182600</a> / <a href="tel:+918102445540">+91 8102445540</a></p>
+                <p>💬 <strong>WhatsApp:</strong> <a href="https://wa.me/919229182600" target="_blank">Chat Line 1</a> | <a href="https://wa.me/918102445540" target="_blank">Chat Line 2</a></p>
+                <br>
+                <p>✉️ <strong>Primary Mail:</strong> <a href="mailto:yeasinalam890@gmail.com">yeasinalam890@gmail.com</a></p>
+                <p>✉️ <strong>Secondary Mail:</strong> <a href="mailto:yeasinalam7890@gmail.com">yeasinalam7890@gmail.com</a></p>
+                <p>✉️ <strong>Third Auxiliary Mail:</strong> <a href="mailto:yeasinalam901@gmail.com">yeasinalam901@gmail.com</a></p>
             </div>
-            <div class="skill-item">
-                <h3>Accountancy</h3>
-                <p>Building foundational financial literacy for future enterprise.</p>
-            </div>
-            <div class="skill-item">
-                <h3>AI & Tech</h3>
-                <p>Experimenting with modern LLMs, automation scripts, and workflows.</p>
-            </div>
-            <div class="skill-item">
-                <h3>Gen-Z Culture</h3>
-                <p>Navigating modern digital sociology and creator ecosystems.</p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Contact Details Layout -->
-    <section class="contact-section">
-        <span class="section-label">03 / Communication</span>
-        <h2>Get In Touch</h2>
-        <div class="contact-channels">
-            <div class="contact-box">
-                <span class="channel-label">Direct Hotline</span>
-                <a href="tel:+919229182600" class="contact-link">+91 9229182600</a>
-                <a href="tel:+918102445540" class="contact-link">+91 8102445540</a>
+        <section style="text-align: center; margin-top: 50px;">
+            <h2>Fund My Next Journey 💸</h2>
+            <div class="payment-card">
+                <p style="font-weight: 600; margin-bottom: 15px;">UPI Quick Tip: GPay / PhonePe / Paytm</p>
+                <button class="qr-btn" onclick="toggleQrCode()">Toggle QR Code 💳</button>
+                <img id="paymentQr" src="1000076222.jpg" alt="UPI QR Payment Portal" class="qr-code">
             </div>
-            <div class="contact-box">
-                <span class="channel-label">Primary Email</span>
-                <a href="mailto:yeasinalam890@gmail.com" class="contact-link">yeasinalam890@gmail.com</a>
-            </div>
-            <div class="contact-box">
-                <span class="channel-label">Social Handles</span>
-                <p style="color: #aaa; margin-top: 5px;">
-                    Instagram: <a href="https://instagram.com/iq_yeasin_00" target="_blank" style="color:#fff;">@iq_yeasin_00</a> | 
-                    Twitter: <a href="https://x.com/iq_yeasin_00" target="_blank" style="color:#fff;">@iq_yeasin_00</a> | 
-                    Reddit: <a href="https://reddit.com/user/YSN_7" target="_blank" style="color:#fff;">u/YSN_7</a>
-                </p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <footer>
-        <div>© 2026 Mohammad Yeasin Alam. All rights reserved.</div>
-        <div><a href="#">Back to Top ↑</a></div>
-    </footer>
+        <footer>
+            <p style="text-align: center; font-weight: 500; margin: 0; opacity: 0.8;">Designed with glassmorphic aesthetics. Stay curious. ✌️</p>
+        </footer>
+    </div>
 
     <script>
         /* ----------------------------------------------------
-           SPOTIFY MULTI-PART PLAYLIST MANAGER
-           (Bypasses Spotify's 100-track embed truncation limit)
+           1. FULLSCREEN BACKGROUND ANIMATION SYSTEM
         ----------------------------------------------------- */
-        // Replace these URLs with your split playlist parts (e.g., separate Spotify playlist links if split into chunks)
-        const spotifyPlaylistParts = [
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0", // Part 1 (1-100)
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0", // Part 2 (101-200)
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0", // Part 3 (201-300)
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0", // Part 4 (301-400)
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0", // Part 5 (401-500)
-            "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0"  // Part 6 (501-575)
-        ];
+        const bgCanvas = document.getElementById("bgCanvas");
+        const bgCtx = bgCanvas.getContext("2d");
+        let activeBgAnimation = null;
+        let bgAnimFrameId = null;
 
-        let currentSpotifyIndex = 0;
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+        resizeBgCanvas();
 
-        function switchSpotifyPart(index, btnEl) {
-            currentSpotifyIndex = index;
-            document.querySelectorAll('#spotifyPlaylistTabs .game-tab-btn').forEach(b => b.classList.remove('active'));
-            if (btnEl) btnEl.classList.add('active');
-
-            const player = document.getElementById("guestSpotifyPlayer");
-            const targetUrl = spotifyPlaylistParts[index];
-            player.src = targetUrl;
-            document.getElementById("browserAddressString").value = targetUrl;
+        function stopBgAnimation() {
+            if (bgAnimFrameId) cancelAnimationFrame(bgAnimFrameId);
+            activeBgAnimation = null;
+            bgCanvas.style.display = "none";
+            document.body.classList.remove('rgb-active');
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
         }
 
+        function startBgAnimation(type) {
+            stopBgAnimation();
+            bgCanvas.style.display = "block";
+            activeBgAnimation = type;
+
+            if (type === 'matrix') initMatrixEffect();
+            else if (type === 'coins') initCoinsEffect();
+            else if (type === 'rain') initRainEffect();
+            else if (type === 'cars') initCarsEffect();
+            else if (type === 'sea') initSeaEffect();
+            else if (type === 'rocket') initRocketEffect();
+        }
+
+        // --- ANIMATION 1: MATRIX BINARY CODE GREEN ---
+        let matrixDrops = [];
+        function initMatrixEffect() {
+            const cols = Math.floor(bgCanvas.width / 16);
+            matrixDrops = Array(cols).fill(1);
+
+            function drawMatrix() {
+                bgCtx.fillStyle = "rgba(0, 0, 0, 0.08)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.fillStyle = "#00ff66";
+                bgCtx.font = "15px monospace";
+
+                for (let i = 0; i < matrixDrops.length; i++) {
+                    const text = Math.random() > 0.5 ? "1" : "0";
+                    bgCtx.fillText(text, i * 16, matrixDrops[i] * 16);
+
+                    if (matrixDrops[i] * 16 > bgCanvas.height && Math.random() > 0.975) {
+                        matrixDrops[i] = 0;
+                    }
+                    matrixDrops[i]++;
+                }
+                if (activeBgAnimation === 'matrix') bgAnimFrameId = requestAnimationFrame(drawMatrix);
+            }
+            drawMatrix();
+        }
+
+        // --- ANIMATION 2: FALLING GOLD COINS ---
+        let coins = [];
+        function initCoinsEffect() {
+            coins = Array.from({ length: 45 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                radius: Math.random() * 8 + 10,
+                speed: Math.random() * 3 + 2,
+                spin: Math.random() * Math.PI,
+                spinSpeed: Math.random() * 0.08 + 0.03
+            }));
+
+            function drawCoins() {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                coins.forEach(c => {
+                    c.y += c.speed;
+                    c.spin += c.spinSpeed;
+                    if (c.y > bgCanvas.height + 20) {
+                        c.y = -20;
+                        c.x = Math.random() * bgCanvas.width;
+                    }
+
+                    const width = Math.cos(c.spin) * c.radius;
+                    bgCtx.beginPath();
+                    bgCtx.ellipse(c.x, c.y, Math.abs(width), c.radius, 0, 0, Math.PI * 2);
+                    bgCtx.fillStyle = "#ffd700";
+                    bgCtx.fill();
+                    bgCtx.lineWidth = 2;
+                    bgCtx.strokeStyle = "#e6a100";
+                    bgCtx.stroke();
+                });
+
+                if (activeBgAnimation === 'coins') bgAnimFrameId = requestAnimationFrame(drawCoins);
+            }
+            drawCoins();
+        }
+
+        // --- ANIMATION 3: CYBER STORM RAIN ---
+        let raindrops = [];
+        function initRainEffect() {
+            raindrops = Array.from({ length: 120 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                length: Math.random() * 20 + 15,
+                speed: Math.random() * 10 + 12
+            }));
+
+            function drawRain() {
+                bgCtx.fillStyle = "rgba(10, 14, 24, 0.3)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.strokeStyle = "rgba(0, 242, 254, 0.7)";
+                bgCtx.lineWidth = 1.8;
+
+                raindrops.forEach(r => {
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(r.x, r.y);
+                    bgCtx.lineTo(r.x - 2, r.y + r.length);
+                    bgCtx.stroke();
+
+                    r.y += r.speed;
+                    r.x -= 1;
+                    if (r.y > bgCanvas.height) {
+                        r.y = -20;
+                        r.x = Math.random() * bgCanvas.width;
+                    }
+                });
+
+                if (activeBgAnimation === 'rain') bgAnimFrameId = requestAnimationFrame(drawRain);
+            }
+            drawRain();
+        }
+
+        // --- ANIMATION 4: HIGHWAY NIGHT CARS ---
+        let highwayCars = [];
+        function initCarsEffect() {
+            highwayCars = Array.from({ length: 15 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: bgCanvas.height - (Math.random() * 70 + 40),
+                speed: (Math.random() * 8 + 6) * (Math.random() > 0.5 ? 1 : -1),
+                color: Math.random() > 0.5 ? '#ff0055' : '#00f2fe',
+                trail: Math.random() * 60 + 50
+            }));
+
+            function drawCars() {
+                bgCtx.fillStyle = "rgba(5, 7, 12, 0.25)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.strokeStyle = "rgba(255,255,255,0.08)";
+                bgCtx.lineWidth = 2;
+                bgCtx.beginPath();
+                bgCtx.moveTo(0, bgCanvas.height - 120);
+                bgCtx.lineTo(bgCanvas.width, bgCanvas.height - 120);
+                bgCtx.stroke();
+
+                highwayCars.forEach(car => {
+                    car.x += car.speed;
+                    if (car.speed > 0 && car.x > bgCanvas.width + car.trail) car.x = -car.trail;
+                    if (car.speed < 0 && car.x < -car.trail) car.x = bgCanvas.width + car.trail;
+
+                    bgCtx.strokeStyle = car.color;
+                    bgCtx.lineWidth = 3;
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(car.x, car.y);
+                    bgCtx.lineTo(car.x - (car.speed * 8), car.y);
+                    bgCtx.stroke();
+                });
+
+                if (activeBgAnimation === 'cars') bgAnimFrameId = requestAnimationFrame(drawCars);
+            }
+            drawCars();
+        }
+
+        // --- ANIMATION 5: DEEP OCEAN SEA WAVES ---
+        let waveStep = 0;
+        function initSeaEffect() {
+            function drawSea() {
+                bgCtx.fillStyle = "rgba(4, 9, 20, 0.25)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                waveStep += 0.03;
+                const waveLayers = [
+                    { y: bgCanvas.height - 130, color: "rgba(0, 119, 182, 0.4)", amp: 25, freq: 0.008 },
+                    { y: bgCanvas.height - 85, color: "rgba(0, 180, 216, 0.5)", amp: 20, freq: 0.012 },
+                    { y: bgCanvas.height - 40, color: "rgba(144, 224, 239, 0.6)", amp: 15, freq: 0.016 }
+                ];
+
+                waveLayers.forEach(w => {
+                    bgCtx.fillStyle = w.color;
+                    bgCtx.beginPath();
+                    bgCtx.moveTo(0, bgCanvas.height);
+                    for (let x = 0; x <= bgCanvas.width; x += 15) {
+                        const y = w.y + Math.sin(x * w.freq + waveStep) * w.amp;
+                        bgCtx.lineTo(x, y);
+                    }
+                    bgCtx.lineTo(bgCanvas.width, bgCanvas.height);
+                    bgCtx.closePath();
+                    bgCtx.fill();
+                });
+
+                if (activeBgAnimation === 'sea') bgAnimFrameId = requestAnimationFrame(drawSea);
+            }
+            drawSea();
+        }
+
+        // --- ANIMATION 6: ROCKET LAUNCH ---
+        let rocket = { x: 0, y: 0, vY: 4 };
+        let stars = [];
+        function initRocketEffect() {
+            rocket.x = bgCanvas.width * 0.85;
+            rocket.y = bgCanvas.height + 50;
+            stars = Array.from({ length: 60 }, () => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 2
+            }));
+
+            function drawRocket() {
+                bgCtx.fillStyle = "rgba(5, 7, 15, 0.35)";
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+                bgCtx.fillStyle = "#ffffff";
+                stars.forEach(s => {
+                    bgCtx.fillRect(s.x, s.y, s.size, s.size);
+                    s.y += 1;
+                    if (s.y > bgCanvas.height) s.y = 0;
+                });
+
+                rocket.y -= rocket.vY;
+                if (rocket.y < -120) {
+                    rocket.y = bgCanvas.height + 60;
+                    rocket.x = Math.random() * (bgCanvas.width - 150) + 75;
+                }
+
+                const rX = rocket.x;
+                const rY = rocket.y;
+
+                bgCtx.fillStyle = Math.random() > 0.5 ? "#ff5500" : "#ffcc00";
+                bgCtx.beginPath();
+                bgCtx.moveTo(rX - 8, rY + 35);
+                bgCtx.lineTo(rX + 8, rY + 35);
+                bgCtx.lineTo(rX, rY + 65 + Math.random() * 20);
+                bgCtx.closePath();
+                bgCtx.fill();
+
+                bgCtx.fillStyle = "#e0e0e0";
+                bgCtx.beginPath();
+                bgCtx.moveTo(rX, rY - 30);
+                bgCtx.lineTo(rX - 12, rY + 30);
+                bgCtx.lineTo(rX + 12, rY + 30);
+                bgCtx.closePath();
+                bgCtx.fill();
+
+                bgCtx.fillStyle = "#00f2fe";
+                bgCtx.beginPath();
+                bgCtx.arc(rX, rY + 2, 4, 0, Math.PI * 2);
+                bgCtx.fill();
+
+                if (activeBgAnimation === 'rocket') bgAnimFrameId = requestAnimationFrame(drawRocket);
+            }
+            drawRocket();
+        }
+
+        /* ----------------------------------------------------
+           2. COLOR & SWATCH CONTROLLER
+        ----------------------------------------------------- */
+        const searchInput = document.getElementById('colorSearchInput');
+
+        function applyColor(val) {
+            const query = val.trim().toLowerCase();
+            const body = document.body;
+            stopBgAnimation();
+
+            if (query === 'rgb' || query === 'mix') {
+                body.classList.add('rgb-active');
+            } else {
+                body.classList.remove('rgb-active');
+                body.style.backgroundColor = query;
+            }
+        }
+
+        searchInput.addEventListener('input', function() {
+            applyColor(this.value);
+        });
+
+        /* ----------------------------------------------------
+           3. MULTI-WINDOW TOGGLES & BACKGROUND MUSIC PERSISTENCE
+        ----------------------------------------------------- */
         let highestZ = 1001;
         function focusPanel(panelEl) {
             highestZ++;
             panelEl.style.zIndex = highestZ;
         }
 
+        // Toggle Color Panel
+        function toggleColorPanel() {
+            const panel = document.getElementById("colorPanel");
+            const btn = document.getElementById("colorWidgetBtn");
+            panel.classList.toggle("show");
+            if (panel.classList.contains("show")) {
+                focusPanel(panel);
+                btn.classList.add("active-widget");
+                setTimeout(() => searchInput.focus(), 100);
+            } else {
+                btn.classList.remove("active-widget");
+            }
+        }
+
+        // Toggle Arcade Game Panel
+        function toggleArcadePanel() {
+            const panel = document.getElementById("arcadePanel");
+            const btn = document.getElementById("gameWidgetBtn");
+            panel.classList.toggle("show");
+            if (panel.classList.contains("show")) {
+                focusPanel(panel);
+                btn.classList.add("active-widget");
+                if (currentGame === 'surfer') initSurfer();
+            } else {
+                btn.classList.remove("active-widget");
+            }
+        }
+
+        // Toggle Music Panel without stopping playback
+        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0";
         function toggleMusicPanel() {
             const panel = document.getElementById("musicPanel");
             const player = document.getElementById("guestSpotifyPlayer");
@@ -773,66 +1094,450 @@
             if (panel.classList.contains("show")) {
                 focusPanel(panel);
                 btn.classList.add("active-widget");
+                // Only load if not already initialized
                 if (!player.src || player.src === "about:blank") {
-                    switchSpotifyPart(currentSpotifyIndex, document.querySelector('#spotifyPlaylistTabs .game-tab-btn'));
+                    player.src = spotifyHomeUrl;
+                    document.getElementById("browserAddressString").value = spotifyHomeUrl;
                 }
             } else {
-                // Keeps audio playing uninterrupted in the background when minimized
+                // When minimized: WE KEEP MUSIC PLAYING (do NOT clear player.src)
                 btn.classList.remove("active-widget");
             }
         }
 
+        // Manual absolute stop for music
         function stopMusicCompletely() {
             const player = document.getElementById("guestSpotifyPlayer");
             player.src = "";
             document.getElementById("musicWidgetBtn").classList.remove("active-widget");
-            document.getElementById("musicPanel").classList.remove("show");
         }
 
         function browserControlReload() {
             const player = document.getElementById("guestSpotifyPlayer");
-            player.src = document.getElementById("browserAddressString").value || spotifyPlaylistParts[currentSpotifyIndex];
+            player.src = document.getElementById("browserAddressString").value || spotifyHomeUrl;
         }
 
-        // Draggable Floating Widget Support
-        const widget = document.getElementById("musicWidgetBtn");
-        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, isDragging = false;
-
-        widget.onmousedown = startDrag;
-        widget.ontouchstart = startDrag;
-
-        function startDrag(e) {
-            pos3 = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-            pos4 = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-            isDragging = false;
-            document.onmouseup = stopDrag;
-            document.ontouchend = stopDrag;
-            document.onmousemove = doDrag;
-            document.ontouchmove = doDrag;
+        function toggleAboutPanel() { document.getElementById("aboutPanel").classList.toggle("show"); }
+        function toggleQrCode() { document.getElementById("paymentQr").classList.toggle("show"); }
+        function toggleTerminalTheme() {
+            const doc = document.documentElement;
+            doc.getAttribute('data-theme') === 'terminal' 
+                ? doc.removeAttribute('data-theme') 
+                : doc.setAttribute('data-theme', 'terminal');
+        }
+        function waveBack() {
+            const wave = document.getElementById('waveEmoji');
+            wave.classList.add('waving-animation');
+            setTimeout(() => wave.classList.remove('waving-animation'), 1100);
         }
 
-        function doDrag(e) {
-            let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-            let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            pos1 = pos3 - clientX;
-            pos2 = pos4 - clientY;
-            if (Math.abs(pos1) > 3 || Math.abs(pos2) > 3) isDragging = true;
-            pos3 = clientX;
-            pos4 = clientY;
-            widget.style.top = (widget.offsetTop - pos2) + "px";
-            widget.style.left = (widget.offsetLeft - pos1) + "px";
-            widget.style.bottom = 'auto';
-            widget.style.right = 'auto';
+        /* ----------------------------------------------------
+           4. DRAGGABLE ENGINE (CLICK = TOGGLE / DRAG = MOVE)
+        ----------------------------------------------------- */
+        function makeElementDraggable(el, headerEl) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, isDragging = false;
+            headerEl.onmousedown = startDrag;
+            headerEl.ontouchstart = startDrag;
+
+            function startDrag(e) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                focusPanel(el);
+                pos3 = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                pos4 = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                isDragging = false;
+                document.onmouseup = stopDrag;
+                document.ontouchend = stopDrag;
+                document.onmousemove = doDrag;
+                document.ontouchmove = doDrag;
+            }
+            function doDrag(e) {
+                let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                if (Math.abs(pos1) > 3 || Math.abs(pos2) > 3) isDragging = true;
+                pos3 = clientX;
+                pos4 = clientY;
+                el.style.top = (el.offsetTop - pos2) + "px";
+                el.style.left = (el.offsetLeft - pos1) + "px";
+                el.style.bottom = 'auto';
+                el.style.right = 'auto';
+            }
+            function stopDrag() {
+                document.onmouseup = null; document.onmousemove = null;
+                document.ontouchend = null; document.ontouchmove = null;
+            }
+            return { wasDragged: () => isDragging };
         }
 
-        function stopDrag() {
-            document.onmouseup = null; document.onmousemove = null;
-            document.ontouchend = null; document.ontouchmove = null;
+        makeElementDraggable(document.getElementById("arcadePanel"), document.getElementById("arcadeHeader"));
+        makeElementDraggable(document.getElementById("musicPanel"), document.getElementById("musicHeader"));
+        makeElementDraggable(document.getElementById("colorPanel"), document.getElementById("colorHeader"));
+
+        const dragGameBtn = makeElementDraggable(document.getElementById("gameWidgetBtn"), document.getElementById("gameWidgetBtn"));
+        const dragMusicBtn = makeElementDraggable(document.getElementById("musicWidgetBtn"), document.getElementById("musicWidgetBtn"));
+        const dragColorBtn = makeElementDraggable(document.getElementById("colorWidgetBtn"), document.getElementById("colorWidgetBtn"));
+
+        document.getElementById("gameWidgetBtn").addEventListener('click', () => { if(!dragGameBtn.wasDragged()) toggleArcadePanel(); });
+        document.getElementById("musicWidgetBtn").addEventListener('click', () => { if(!dragMusicBtn.wasDragged()) toggleMusicPanel(); });
+        document.getElementById("colorWidgetBtn").addEventListener('click', () => { if(!dragColorBtn.wasDragged()) toggleColorPanel(); });
+
+        /* ----------------------------------------------------
+           5. ARCADE MULTI-GAME ENGINE (SURFER, RACER, SHOOTER, SNAKE, PUZZLE)
+        ----------------------------------------------------- */
+        let currentGame = 'surfer';
+        const canvas = document.getElementById("arcadeCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElem = document.getElementById("arcadeScore");
+        const highScoreElem = document.getElementById("arcadeHighScore");
+        let currentScore = 0, bestScores = { surfer: 0, racer: 0, shooter: 0, snake: 0, puzzle: 0 };
+        let gameLoopTimer = null;
+
+        function updateScore(val) {
+            currentScore = val;
+            scoreElem.innerText = currentScore;
+            if (currentScore > bestScores[currentGame]) {
+                bestScores[currentGame] = currentScore;
+                highScoreElem.innerText = bestScores[currentGame];
+            }
         }
 
-        widget.addEventListener('click', () => {
-            if (!isDragging) toggleMusicPanel();
+        function switchGame(gameKey) {
+            currentGame = gameKey;
+            currentScore = 0;
+            updateScore(0);
+            highScoreElem.innerText = bestScores[gameKey] || 0;
+
+            document.querySelectorAll('.game-tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            clearInterval(gameLoopTimer);
+
+            const canvasBox = document.getElementById('canvasBox');
+            const puzzleBox = document.getElementById('puzzleContainer');
+            const navPads = document.getElementById('arcadeNavPads');
+            const tip = document.getElementById('gameHelpTip');
+
+            if (gameKey === 'puzzle') {
+                canvasBox.style.display = 'none';
+                navPads.style.display = 'none';
+                puzzleBox.style.display = 'block';
+                tip.innerText = "Click adjacent tiles to slide and align 1-8!";
+                initPuzzle();
+            } else {
+                canvasBox.style.display = 'inline-block';
+                navPads.style.display = 'grid';
+                puzzleBox.style.display = 'none';
+
+                if (gameKey === 'surfer') {
+                    tip.innerText = "◀ ▶: Switch Lane | ▲: Jump Barriers";
+                    initSurfer();
+                } else if (gameKey === 'racer') {
+                    tip.innerText = "◀ ▶: Steer car to dodge traffic";
+                    initRacer();
+                } else if (gameKey === 'shooter') {
+                    tip.innerText = "◀ ▶: Move ship | ▲: Fire Blaster";
+                    initShooter();
+                } else if (gameKey === 'snake') {
+                    tip.innerText = "▲ ▼ ◀ ▶: Eat pink energy cores";
+                    initSnake();
+                }
+            }
+        }
+
+        function triggerControl(direction) {
+            if (currentGame === 'surfer') surferControl(direction);
+            if (currentGame === 'racer') racerControl(direction);
+            if (currentGame === 'shooter') shooterControl(direction);
+            if (currentGame === 'snake') snakeControl(direction);
+        }
+
+        // ================= GAME 1: 3D SURFER =================
+        let surfer = { lane: 1, yOffset: 0, isJumping: false, vY: 0 };
+        let surferObstacles = [], surferSpeed = 4, surferSpawnTick = 0;
+        const lanesX = [60, 160, 260];
+
+        function initSurfer() {
+            surfer = { lane: 1, yOffset: 0, isJumping: false, vY: 0 };
+            surferObstacles = [];
+            surferSpeed = 4;
+            clearInterval(gameLoopTimer);
+            gameLoopTimer = setInterval(surferLoop, 1000 / 40);
+        }
+
+        function surferControl(dir) {
+            if (dir === 'LEFT' && surfer.lane > 0) surfer.lane--;
+            if (dir === 'RIGHT' && surfer.lane < 2) surfer.lane++;
+            if (dir === 'UP' && !surfer.isJumping) {
+                surfer.isJumping = true;
+                surfer.vY = -9;
+            }
+        }
+
+        function surferLoop() {
+            if (surfer.isJumping) {
+                surfer.yOffset += surfer.vY;
+                surfer.vY += 0.7;
+                if (surfer.yOffset >= 0) { surfer.yOffset = 0; surfer.isJumping = false; }
+            }
+
+            surferSpawnTick++;
+            if (surferSpawnTick % 35 === 0) {
+                const lane = Math.floor(Math.random() * 3);
+                const type = Math.random() > 0.4 ? 'barrier' : 'train';
+                surferObstacles.push({ lane, z: 0, type });
+            }
+
+            ctx.fillStyle = "#0c0e18";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "rgba(0, 242, 254, 0.4)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(130, 40); ctx.lineTo(10, 240);
+            ctx.moveTo(150, 40); ctx.lineTo(110, 240);
+            ctx.moveTo(170, 40); ctx.lineTo(210, 240);
+            ctx.moveTo(190, 40); ctx.lineTo(310, 240);
+            ctx.stroke();
+
+            for (let i = surferObstacles.length - 1; i >= 0; i--) {
+                let obs = surferObstacles[i];
+                obs.z += surferSpeed;
+                let scale = obs.z / 200;
+                let x = 160 + (obs.lane - 1) * (50 + scale * 50);
+                let y = 40 + scale * 170;
+                let w = 24 * (scale + 0.3);
+                let h = (obs.type === 'train' ? 38 : 16) * (scale + 0.3);
+
+                ctx.fillStyle = obs.type === 'train' ? '#ff007f' : '#ffb703';
+                ctx.fillRect(x - w / 2, y - h, w, h);
+
+                if (obs.z > 165 && obs.z < 195 && obs.lane === surfer.lane) {
+                    if (obs.type === 'train' || (obs.type === 'barrier' && surfer.yOffset > -15)) {
+                        initSurfer();
+                        return;
+                    }
+                }
+
+                if (obs.z > 210) {
+                    surferObstacles.splice(i, 1);
+                    updateScore(currentScore + 10);
+                }
+            }
+
+            let playerX = lanesX[surfer.lane];
+            let playerY = 205 + surfer.yOffset;
+            ctx.fillStyle = "#00f2fe";
+            ctx.beginPath();
+            ctx.arc(playerX, playerY - 14, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#7928ca";
+            ctx.fillRect(playerX - 6, playerY - 6, 12, 12);
+            ctx.fillStyle = "#00ff88";
+            ctx.fillRect(playerX - 10, playerY + 6, 20, 4);
+        }
+
+        // ================= GAME 2: TURBO CAR RACER =================
+        let playerCar = { x: 145 }, traffic = [];
+        function initRacer() {
+            playerCar = { x: 145 };
+            traffic = [];
+            clearInterval(gameLoopTimer);
+            gameLoopTimer = setInterval(racerLoop, 1000 / 40);
+        }
+        function racerControl(dir) {
+            if (dir === 'LEFT' && playerCar.x > 50) playerCar.x -= 30;
+            if (dir === 'RIGHT' && playerCar.x < 240) playerCar.x += 30;
+        }
+        function racerLoop() {
+            ctx.fillStyle = "#11141f";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "rgba(255,255,255,0.2)";
+            ctx.strokeRect(40, 0, 240, 240);
+            ctx.strokeStyle = "#ff007f";
+            ctx.setLineDash([15, 15]);
+            ctx.beginPath(); ctx.moveTo(120, 0); ctx.lineTo(120, 240); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(200, 0); ctx.lineTo(200, 240); ctx.stroke();
+            ctx.setLineDash([]);
+
+            if (Math.random() < 0.05) {
+                traffic.push({ x: [60, 140, 220][Math.floor(Math.random() * 3)], y: -30 });
+            }
+
+            for (let i = traffic.length - 1; i >= 0; i--) {
+                let car = traffic[i];
+                car.y += 5;
+                ctx.fillStyle = "#ff2a5f";
+                ctx.fillRect(car.x, car.y, 22, 34);
+
+                if (Math.abs(car.x - playerCar.x) < 22 && Math.abs(car.y - 185) < 32) {
+                    initRacer();
+                    return;
+                }
+                if (car.y > 250) {
+                    traffic.splice(i, 1);
+                    updateScore(currentScore + 5);
+                }
+            }
+
+            ctx.fillStyle = "#00f2fe";
+            ctx.fillRect(playerCar.x, 185, 24, 36);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(playerCar.x + 3, 192, 18, 10);
+        }
+
+        // ================= GAME 3: SPACE SHOOTER =================
+        let shipX = 145, bullets = [], aliens = [];
+        function initShooter() {
+            shipX = 145; bullets = []; aliens = [];
+            clearInterval(gameLoopTimer);
+            gameLoopTimer = setInterval(shooterLoop, 1000 / 40);
+        }
+        function shooterControl(dir) {
+            if (dir === 'LEFT' && shipX > 20) shipX -= 20;
+            if (dir === 'RIGHT' && shipX < 280) shipX += 20;
+            if (dir === 'UP') bullets.push({ x: shipX + 11, y: 195 });
+        }
+        function shooterLoop() {
+            ctx.fillStyle = "#090a10";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (Math.random() < 0.04) {
+                aliens.push({ x: Math.random() * 280 + 10, y: -10, speed: Math.random() * 2 + 1.5 });
+            }
+
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i];
+                b.y -= 7;
+                ctx.fillStyle = "#00ff88";
+                ctx.fillRect(b.x, b.y, 3, 9);
+                if (b.y < 0) bullets.splice(i, 1);
+            }
+
+            for (let i = aliens.length - 1; i >= 0; i--) {
+                let a = aliens[i];
+                a.y += a.speed;
+                ctx.fillStyle = "#ff007f";
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    let b = bullets[j];
+                    if (Math.hypot(a.x - b.x, a.y - b.y) < 13) {
+                        aliens.splice(i, 1);
+                        bullets.splice(j, 1);
+                        updateScore(currentScore + 20);
+                        break;
+                    }
+                }
+
+                if (a.y > 240) { initShooter(); return; }
+            }
+
+            ctx.fillStyle = "#00f2fe";
+            ctx.beginPath();
+            ctx.moveTo(shipX + 12, 195);
+            ctx.lineTo(shipX, 218);
+            ctx.lineTo(shipX + 24, 218);
+            ctx.fill();
+        }
+
+        // ================= GAME 4: RETRO SNAKE =================
+        let snake = [{x: 140, y: 90}], snakeDir = {x: 10, y: 0}, food = {x: 60, y: 60};
+        function initSnake() {
+            snake = [{x: 140, y: 90}];
+            snakeDir = {x: 10, y: 0};
+            spawnFood();
+            clearInterval(gameLoopTimer);
+            gameLoopTimer = setInterval(snakeLoop, 110);
+        }
+        function spawnFood() {
+            food.x = Math.floor(Math.random() * 30) * 10 + 10;
+            food.y = Math.floor(Math.random() * 22) * 10 + 10;
+        }
+        function snakeControl(dir) {
+            if (dir === 'LEFT' && snakeDir.x === 0) snakeDir = {x: -10, y: 0};
+            if (dir === 'UP' && snakeDir.y === 0) snakeDir = {x: 0, y: -10};
+            if (dir === 'RIGHT' && snakeDir.x === 0) snakeDir = {x: 10, y: 0};
+            if (dir === 'DOWN' && snakeDir.y === 0) snakeDir = {x: 0, y: 10};
+        }
+        function snakeLoop() {
+            const head = { x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y };
+            if (head.x < 0 || head.x >= 320 || head.y < 0 || head.y >= 240) { initSnake(); return; }
+            for (let part of snake) if (part.x === head.x && part.y === head.y) { initSnake(); return; }
+
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                updateScore(currentScore + 10);
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            ctx.fillStyle = "#0c0e18";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ff007f";
+            ctx.fillRect(food.x, food.y, 9, 9);
+            ctx.fillStyle = "#00ff88";
+            snake.forEach(part => ctx.fillRect(part.x, part.y, 9, 9));
+        }
+
+        // ================= GAME 5: SLIDE PUZZLE =================
+        let puzzleTiles = [1, 2, 3, 4, 5, 6, 7, 8, ''];
+        function initPuzzle() {
+            puzzleTiles = [1, 2, 3, 4, 5, 6, 7, 8, ''];
+            for (let i = puzzleTiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [puzzleTiles[i], puzzleTiles[j]] = [puzzleTiles[j], puzzleTiles[i]];
+            }
+            renderPuzzle();
+        }
+
+        function renderPuzzle() {
+            const grid = document.getElementById("puzzleGrid");
+            grid.innerHTML = '';
+            puzzleTiles.forEach((val, idx) => {
+                const tile = document.createElement("div");
+                tile.className = "puzzle-tile" + (val === '' ? ' empty' : '');
+                tile.innerText = val;
+                tile.onclick = () => moveTile(idx);
+                grid.appendChild(tile);
+            });
+        }
+
+        function moveTile(idx) {
+            const emptyIdx = puzzleTiles.indexOf('');
+            const validMoves = [idx - 1, idx + 1, idx - 3, idx + 3];
+            const isRowAdjacent = Math.floor(idx / 3) === Math.floor(emptyIdx / 3) && Math.abs(idx - emptyIdx) === 1;
+            const isColAdjacent = Math.abs(idx - emptyIdx) === 3;
+
+            if (isRowAdjacent || isColAdjacent) {
+                [puzzleTiles[idx], puzzleTiles[emptyIdx]] = [puzzleTiles[emptyIdx], puzzleTiles[idx]];
+                updateScore(currentScore + 1);
+                renderPuzzle();
+            }
+        }
+
+        /* ----------------------------------------------------
+           6. GLOBAL HOTKEYS
+        ----------------------------------------------------- */
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') return;
+            const key = e.key.toLowerCase();
+            if (key === 'arrowleft') { e.preventDefault(); triggerControl('LEFT'); }
+            if (key === 'arrowup') { e.preventDefault(); triggerControl('UP'); }
+            if (key === 'arrowright') { e.preventDefault(); triggerControl('RIGHT'); }
+            if (key === 'arrowdown') { e.preventDefault(); triggerControl('DOWN'); }
+            if (key === 'c') toggleColorPanel();
+            if (key === 'g') toggleArcadePanel();
+            if (key === 'm') toggleMusicPanel();
+            if (key === 't') toggleTerminalTheme();
+            if (key === 'a') toggleAboutPanel();
         });
+
+        initSurfer();
     </script>
 </body>
 </html>
