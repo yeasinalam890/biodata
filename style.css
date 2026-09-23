@@ -4,6 +4,12 @@
     --accent-color: #555555;
     --card-bg: #121212;
     --border-color: #222222;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-blur: 16px;
+    --accent-cyan: #00f2fe;
+    --accent-pink: #ff007f;
+    --accent-green: #00ff88;
 }
 
 * {
@@ -385,6 +391,140 @@ nav {
         margin-top: 0.5rem;
     }
 }
+
+/* Floating Action Widgets & Music Panel UI */
+.draggable-widget {
+    position: fixed;
+    width: 58px; height: 58px;
+    background: rgba(20, 24, 38, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 10000;
+    user-select: none;
+    touch-action: none;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.draggable-widget:hover {
+    transform: scale(1.1);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+}
+
+.draggable-widget.active-widget {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 15px var(--accent-green);
+}
+
+#musicWidgetBtn { bottom: 25px; right: 25px; }
+
+.arcade-panel-box {
+    position: fixed;
+    width: 440px;
+    max-width: calc(100% - 30px);
+    background: rgba(18, 18, 18, 0.92);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+    overflow: hidden;
+}
+
+#musicPanel { bottom: 95px; right: 25px; }
+
+.arcade-panel-box.show {
+    display: block;
+}
+
+.panel-ui-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    font-weight: 700;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: move;
+    border-bottom: 1px solid var(--border-color);
+    user-select: none;
+    font-size: 0.9rem;
+}
+
+.panel-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-ui-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.panel-ui-close:hover { background: var(--accent-pink); }
+
+.game-tabs-nav {
+    display: flex;
+    background: rgba(0,0,0,0.4);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+    padding: 6px;
+    gap: 6px;
+}
+
+.game-tab-btn {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.game-tab-btn.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid var(--border-color);
+}
+
+.browser-navigation-bar {
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 12px;
+    display: flex; align-items: center; gap: 8px;
+}
+.browser-url-input {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    border-radius: 8px;
+    outline: none;
+}
+.browser-viewport-wrapper {
+    background: #000;
+    line-height: 0;
+    height: 352px;
+}
+#guestSpotifyPlayer { border: none; width: 100%; height: 100%; }
 
 /* Contact Details Layout */
 .contact-section {
