@@ -727,7 +727,7 @@
                 <p>🔗 <strong>Instagram:</strong> <a href="https://instagram.com/iq_yeasin_00" target="_blank">@iq_yeasin_00</a></p>
                 <p>🔗 <strong>X / Twitter:</strong> <a href="https://x.com/iq_yeasin_00" target="_blank">@iq_yeasin_00</a></p>
                 <p>🔗 <strong>Reddit:</strong> <a href="https://reddit.com/user/YSN_7" target="_blank">u/YSN_7</a></p>
-                <p>🔗 <strong>Spotify:</strong> <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator" target="_blank">Especial Trck 69</a></p>
+                <p>🔗 <strong>Spotify:</strong> <a href="https://open.spotify.com/playlist/7nMUentFkCzGn7RZBbvHLC?si=NWoJeHEBRL2d6Bi9OZZR5A" target="_blank">Especial Trck 69</a></p>
             </div>
 
             <h2>Get In Touch Direct 📱</h2>
@@ -1083,7 +1083,7 @@
         }
 
         // Toggle Music Panel without stopping playback
-        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator";
+        const spotifyHomeUrl = "https://open.spotify.com/embed/playlist/7nMUentFkCzGn7RZBbvHLC?utm_source=generator&theme=0";
         function toggleMusicPanel() {
             const panel = document.getElementById("musicPanel");
             const player = document.getElementById("guestSpotifyPlayer");
@@ -1094,7 +1094,7 @@
             if (panel.classList.contains("show")) {
                 focusPanel(panel);
                 btn.classList.add("active-widget");
-                // Only load if not already playing
+                // Only load if not already initialized
                 if (!player.src || player.src === "about:blank") {
                     player.src = spotifyHomeUrl;
                     document.getElementById("browserAddressString").value = spotifyHomeUrl;
